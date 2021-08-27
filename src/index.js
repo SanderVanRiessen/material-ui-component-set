@@ -5,8 +5,11 @@ import * as Styles from '@material-ui/styles';
 import DateFnsUtils from '@date-io/date-fns';
 import enLocale from 'date-fns/locale/en-US';
 import nlLocale from 'date-fns/locale/nl';
+import Chart from 'react-apexcharts';
 
 import Icons from './icons';
+
+window.Chart = Chart;
 
 export default {
   Core,
