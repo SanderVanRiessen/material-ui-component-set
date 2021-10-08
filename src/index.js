@@ -5,8 +5,13 @@ import * as Styles from '@material-ui/styles';
 import DateFnsUtils from '@date-io/date-fns';
 import enLocale from 'date-fns/locale/en-US';
 import nlLocale from 'date-fns/locale/nl';
+import * as ExportHtml from 'draft-js-export-html';
+import * as Draft from 'draft-js';
 
 import Icons from './icons';
+
+window.ExportHtml = ExportHtml;
+window.Draft = Draft;
 
 export default {
   Core,
@@ -16,4 +21,6 @@ export default {
   Styles,
   DateFnsUtils,
   DateLocales: { enLocale, nlLocale },
+  Draft,
+  ExportHtml,
 };

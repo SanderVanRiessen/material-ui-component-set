@@ -21,7 +21,7 @@
     "prettier": "^1.15.3",
     "semantic-release": "^17.2.3",
     "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^4.9.0"
   },
   "husky": {
     "hooks": {
@@ -52,6 +52,8 @@
     "@material-ui/pickers": "^3.2.10",
     "@material-ui/styles": "^4.9.10",
     "date-fns": "^2.11.0",
+    "draft-js": "^0.11.7",
+    "draft-js-export-html": "^1.4.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },

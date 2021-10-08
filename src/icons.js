@@ -315,9 +315,23 @@ import {
   Widgets,
   Wifi,
   Work,
+  FormatBold,
+  FormatUnderlined,
+  FormatItalic,
+  StrikethroughS,
+  FormatListBulleted,
+  FormatListNumbered,
+  FormatQuote,
 } from '@material-ui/icons';
 
 export default {
+  FormatBold,
+  FormatUnderlined,
+  FormatItalic,
+  StrikethroughS,
+  FormatListBulleted,
+  FormatListNumbered,
+  FormatQuote,
   AcUnit,
   AccessTime,
   AccessibilityNew,
