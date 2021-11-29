@@ -7,6 +7,9 @@ import enLocale from 'date-fns/locale/en-US';
 import nlLocale from 'date-fns/locale/nl';
 import * as ExportHtml from 'draft-js-export-html';
 import * as Draft from 'draft-js';
+import * as Scheduler from '@devexpress/dx-react-scheduler';
+import * as MUIScheduler from '@devexpress/dx-react-scheduler-material-ui';
+import { add, sub } from 'date-fns';
 
 import Icons from './icons';
 
@@ -23,4 +26,8 @@ export default {
   DateLocales: { enLocale, nlLocale },
   Draft,
   ExportHtml,
+  Scheduler,
+  MUIScheduler,
+  add,
+  sub,
 };
