@@ -246,6 +246,7 @@
         const { active, label: buttonLabel } = props;
         const onToggle = e => {
           e.preventDefault();
+          // eslint-disable-next-line react/destructuring-assignment
           props.onToggle(props.style);
         };
 
@@ -315,6 +316,7 @@
                   key={type.label}
                   active={type.style === blockType}
                   label={type.label}
+                  // eslint-disable-next-line react/destructuring-assignment
                   onToggle={props.onToggle}
                   style={type.style}
                   onClick={handleClose}
@@ -376,6 +378,7 @@
                 key={type.label}
                 active={type.style === blockType}
                 label={type.label}
+                // eslint-disable-next-line react/destructuring-assignment
                 onToggle={props.onToggle}
                 style={type.style}
               />
@@ -768,6 +771,7 @@
             </span>
             <div className={classes.RichEditor}>
               <Editor
+                // eslint-disable-next-line react/jsx-no-bind
                 blockStyleFn={getBlockStyle}
                 customStyleMap={styleMap}
                 editorState={editorState}
