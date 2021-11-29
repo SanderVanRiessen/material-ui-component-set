@@ -13,7 +13,7 @@
           getActionInput,
           getIdProperty,
           ModelProvider,
-          useAllQuery,
+          useOneQuery,
           useEndpoint,
           useText,
         } = B;
@@ -29,6 +29,7 @@
           currentRecord,
           loadingType,
           loadingText,
+          dataComponentAttribute,
         } = options;
         const formRef = React.createRef();
         const parsedLoadingText = useText(loadingText);
@@ -149,16 +150,22 @@
           .join(' ')
           .trim();
 
-        const FormElement = (
-          <form className={classNames || undefined}>
-            {isPristine && (
-              <span>Drag form components in the form to submit data</span>
-            )}
-            {children}
-          </form>
-        );
+        const FormElement = () => {
+          B.defineFunction('Refetch', () => {});
+          return (
+            <form
+              className={classNames || undefined}
+              data-component={useText(dataComponentAttribute) || 'Form'}
+            >
+              {isPristine && (
+                <span>Drag form components in the form to submit data</span>
+              )}
+              {children}
+            </form>
+          );
+        };
 
-        const FormCmp = ({ item }) => {
+        const FormCmp = ({ item, refetch }) => {
           const [isInvalid, setIsInvalid] = useState(false);
           const handleInvalid = () => {
             if (!isInvalid) {
@@ -166,6 +173,10 @@
               B.triggerEvent('onInvalid');
             }
           };
+
+          B.defineFunction('Refetch', () => {
+            if (refetch) refetch();
+          });
 
           useEffect(() => {
             B.triggerEvent('onComponentRendered');
@@ -195,6 +206,7 @@
                     }}
                     ref={formRef}
                     className={classNames || undefined}
+                    data-component={useText(dataComponentAttribute) || 'Form'}
                   >
                     {isPristine && (
                       <span>
@@ -231,17 +243,15 @@
 
           const {
             loading: isFetching,
-            data: records,
+            data: item,
             error: err,
             refetch,
-          } = useAllQuery(
+          } = useOneQuery(
             modelId,
             {
               filter: applyFilter,
-              skip: !applyFilter,
-              take: 1,
             },
-            !modelId,
+            !applyFilter,
           );
 
           B.defineFunction('Refetch', () => refetch());
@@ -255,8 +265,6 @@
           if (err) {
             B.triggerEvent('onDataError', err);
           }
-
-          const item = records && records.results[0];
 
           if (item) {
             if (item.id) {
@@ -274,12 +282,12 @@
           if (err && displayError) return err.message;
           if (!item) return children;
 
-          return <FormCmp item={item} />;
+          return <FormCmp item={item} refetch={refetch} />;
         };
 
         const RuntimeForm = hasFilter ? <FormWithData /> : <FormCmp />;
 
-        return isDev ? FormElement : RuntimeForm;
+        return isDev ? <FormElement /> : RuntimeForm;
       })()}
     </div>
   ),

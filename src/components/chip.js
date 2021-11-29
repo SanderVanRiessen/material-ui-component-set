@@ -5,8 +5,7 @@
   orientation: 'HORIZONTAL',
   jsx: (() => {
     const { Chip, Avatar } = window.MaterialUI.Core;
-    const { Icons } = window.MaterialUI;
-    const { env, useText } = B;
+    const { env, useText, Icon } = B;
     const {
       label,
       disabled,
@@ -16,6 +15,7 @@
       imgUrl,
       avatartype,
       size,
+      dataComponentAttribute,
     } = options;
     const isDev = env === 'dev';
 
@@ -39,12 +39,15 @@
         disabled={disabled}
         variant={variant}
         icon={
-          avatartype === 'icon' && startIcon !== 'None'
-            ? React.createElement(Icons[startIcon])
-            : undefined
+          avatartype === 'icon' && startIcon !== 'None' ? (
+            <Icon name={startIcon} />
+          ) : (
+            undefined
+          )
         }
         avatar={AvatarComponent}
         size={size}
+        data-component={useText(dataComponentAttribute) || 'Chip'}
       />
     );
     return isDev ? (

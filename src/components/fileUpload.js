@@ -1,38 +1,30 @@
 (() => ({
   name: 'FileUpload',
   type: 'CONTENT_COMPONENT',
-  allowedTypes: [],
+  allowedTypes: ['CONTENT_COMPONENT'],
   orientation: 'HORIZONTAL',
   jsx: (() => {
-    const { env, getCustomModelAttribute, useFileUpload, useText } = B;
+    const { env, getCustomModelAttribute, useFileUpload, useText, Icon } = B;
     const {
       FormControl,
-      FormControlLabel,
       FormHelperText,
-      Button,
       Typography,
       IconButton,
     } = window.MaterialUI.Core;
-    const { Icons } = window.MaterialUI;
-    const { Delete, CloudUpload } = Icons;
     const {
       hideDefaultError,
       disabled,
       helperText,
       fullWidth,
-      size,
       accept,
       margin,
-      variant,
-      icon,
-      iconPosition,
-      buttonText,
       multiple,
       hideLabel,
       customModelAttribute: customModelAttributeObj,
       nameAttribute,
       type,
       showImagePreview,
+      dataComponentAttribute = ['FileUpload'],
     } = options;
 
     const isDev = env === 'dev';
@@ -60,6 +52,7 @@
     const nameAttributeValue = useText(nameAttribute);
     const requiredText = required ? '*' : '';
     const [uploadedFileArray, setUploadedFileArray] = useState([]);
+    const dataComponentAttributeValue = useText(dataComponentAttribute);
 
     const formatBytes = bytes => {
       if (bytes === 0) return '0 Bytes';
@@ -147,12 +140,8 @@
       });
     };
 
-    const UploadComponent = (
-      <div
-        className={[classes.control, fullWidth ? classes.fullwidth : ''].join(
-          ' ',
-        )}
-      >
+    const UploadComponent = () => (
+      <div data-component={dataComponentAttributeValue}>
         <input
           accept={acceptedValue}
           className={classes.input}
@@ -161,35 +150,7 @@
           onChange={handleChange}
           ref={inputRef}
         />
-        <Button
-          size={size}
-          variant={variant}
-          classes={{
-            root: classes.button,
-            contained: classes.contained,
-            outlined: classes.outlined,
-          }}
-          component="span"
-          disabled={disabled}
-          startIcon={
-            variant !== 'icon' &&
-            icon !== 'None' &&
-            iconPosition === 'start' &&
-            React.createElement(Icons[icon])
-          }
-          endIcon={
-            variant !== 'icon' &&
-            icon !== 'None' &&
-            iconPosition === 'end' &&
-            React.createElement(Icons[icon])
-          }
-        >
-          {variant === 'icon'
-            ? React.createElement(Icons[icon === 'None' ? 'Error' : icon], {
-                fontSize: size,
-              })
-            : useText(buttonText)}
-        </Button>
+        {children}
         {data.length > 0 && (
           <input
             type="hidden"
@@ -216,7 +177,7 @@
             }
           }}
         >
-          <Delete className={classes.deleteIcon} fontSize="small" />
+          <Icon name="Delete" className={classes.deleteIcon} fontSize="small" />
         </IconButton>
       </div>
     );
@@ -337,7 +298,7 @@
               <div className={classes.gridItem}>
                 {showImagePreview && (
                   <div className={classes.gridUploadingImage}>
-                    <CloudUpload />
+                    <Icon name="CloudUpload" />
                   </div>
                 )}
                 <div className={classes.gridItemDetails}>
@@ -354,7 +315,7 @@
               <div className={classes.listView}>
                 {showImagePreview && (
                   <div className={classes.uploadingImage}>
-                    <CloudUpload />
+                    <Icon name="CloudUpload" />
                   </div>
                 )}
                 <div className={classes.fileDetails}>
@@ -366,6 +327,8 @@
       }
     };
 
+    const Label = isDev ? 'div' : 'label';
+
     const Control = () => (
       <FormControl
         fullWidth={fullWidth}
@@ -374,14 +337,10 @@
         disabled={disabled}
         margin={margin}
       >
-        <FormControlLabel
-          control={UploadComponent}
-          label={hideLabel ? '' : `${labelText}${requiredText}`}
-          labelPlacement="top"
-          classes={{
-            root: classes.label,
-          }}
-        />
+        <Label className={classes.label}>
+          {hideLabel ? '' : `${labelText}${requiredText}`}
+          <UploadComponent />
+        </Label>
         <FormHelperText classes={{ root: classes.helper }}>
           {helperValue}
         </FormHelperText>
@@ -420,7 +379,7 @@
     );
   })(),
   styles: B => t => {
-    const { color: colorFunc, env, Styling } = B;
+    const { color: colorFunc, Styling } = B;
     const style = new Styling(t);
     const getOpacColor = (col, val) => colorFunc.alpha(col, val);
     return {
@@ -430,7 +389,6 @@
       },
       label: {
         marginLeft: '0!important',
-        pointerEvents: env === 'dev' && 'none',
         alignItems: 'start!important',
         color: ({ options: { labelColor } }) => [
           style.getColor(labelColor),
@@ -462,10 +420,6 @@
       input: {
         display: 'none',
       },
-      control: {
-        display: 'inline-flex',
-        alignItems: 'center',
-      },
       fullwidth: {
         display: 'flex',
         width: '100%',
@@ -475,29 +429,6 @@
         textAlign: 'start',
         marginBottom: '0.1875rem!important',
         marginRight: '1rem!important',
-      },
-      button: {
-        width: '100%',
-        color: ({ options: { variant, buttonTextColor, background } }) => [
-          style.getColor(variant === 'icon' ? background : buttonTextColor),
-          '!important',
-        ],
-        '&.Mui-disabled': {
-          pointerEvents: 'none',
-          opacity: '0.7',
-        },
-      },
-      contained: {
-        backgroundColor: ({ options: { background } }) => [
-          style.getColor(background),
-          '!important',
-        ],
-      },
-      outlined: {
-        borderColor: ({ options: { background } }) => [
-          style.getColor(background),
-          '!important',
-        ],
       },
       messageContainer: {
         flexWrap: 'wrap',

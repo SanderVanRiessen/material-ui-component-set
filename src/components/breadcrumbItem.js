@@ -4,11 +4,16 @@
   allowedTypes: [],
   orientation: 'VERTICAL',
   jsx: (() => {
-    const { Link, useText, env } = B;
+    const { Link, useText, env, Icon } = B;
     const isDev = env === 'dev';
     const { Typography } = window.MaterialUI.Core;
-    const { Icons } = window.MaterialUI;
-    const { endpoint, breadcrumbContent, icon, iconPosition } = options;
+    const {
+      endpoint,
+      breadcrumbContent,
+      icon,
+      iconPosition,
+      dataComponentAttribute,
+    } = options;
     const content = useText(breadcrumbContent);
     const hasEndpoint = endpoint && endpoint.id !== '';
 
@@ -23,11 +28,9 @@
       />
     );
 
-    const IconComponent =
-      icon !== 'None' &&
-      React.createElement(Icons[icon], {
-        className: classes[`icon${iconPosition}`],
-      });
+    const IconComponent = icon !== 'None' && (
+      <Icon name={icon} className={classes[`icon${iconPosition}`]} />
+    );
 
     const ItemContent = (
       <>
@@ -44,11 +47,17 @@
       <Link
         className={[classes.content, classes.link].join(' ')}
         endpoint={endpoint}
+        data-component={useText(dataComponentAttribute) || 'BreadcrumbItem'}
       >
         {BreadcrumbChildren}
       </Link>
     ) : (
-      <Typography className={classes.content}>{BreadcrumbChildren}</Typography>
+      <Typography
+        className={classes.content}
+        data-component={useText(dataComponentAttribute) || 'BreadcrumbItem'}
+      >
+        {BreadcrumbChildren}
+      </Typography>
     );
 
     return isDev ? (

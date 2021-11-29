@@ -67,12 +67,6 @@
           type: 'TOGGLE',
         },
         {
-          value: '',
-          label: 'Authentication Profile',
-          key: 'authProfile',
-          type: 'AUTHENTICATION_PROFILE',
-        },
-        {
           label: 'Pagination',
           key: 'pagination',
           value: 'always',
@@ -199,6 +193,26 @@
               option: 'loadingType',
               comparator: 'EQ',
               value: 'default',
+            },
+          },
+        },
+        {
+          value: false,
+          label: 'Advanced settings',
+          key: 'advancedSettings',
+          type: 'TOGGLE',
+        },
+        {
+          type: 'VARIABLE',
+          label: 'Test attribute',
+          key: 'dataComponentAttribute',
+          value: ['DataList'],
+          configuration: {
+            condition: {
+              type: 'SHOW',
+              option: 'advancedSettings',
+              comparator: 'EQ',
+              value: true,
             },
           },
         },

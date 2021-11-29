@@ -12,7 +12,6 @@
       Menu,
       MenuItem,
     } = window.MaterialUI.Core;
-    const { Menu: MenuIcon } = window.MaterialUI.Icons;
     const {
       position,
       title,
@@ -22,8 +21,9 @@
       toolbarVariant,
       square,
       elevation,
+      dataComponentAttribute,
     } = options;
-    const { Link, env, useText } = B;
+    const { Link, env, useText, Icon } = B;
     const isDev = env === 'dev';
     const [anchorEl, setAnchorEl] = useState(null);
     const isOpen = !!anchorEl;
@@ -53,6 +53,7 @@
         variant={appBarVariant}
         square={square}
         elevation={appBarVariant === 'flat' ? 0 : elevation}
+        data-component={useText(dataComponentAttribute) || 'AppBar'}
       >
         <Toolbar variant={toolbarVariant} classes={{ root: classes.toolbar }}>
           {logo.length > 0 && LogoComponent}
@@ -70,7 +71,7 @@
             <>
               <div className={classes.collapsed}>
                 <IconButton color="inherit" onClick={handleMenu}>
-                  <MenuIcon />
+                  <Icon name="Menu" />
                 </IconButton>
                 <Menu
                   anchorEl={anchorEl}

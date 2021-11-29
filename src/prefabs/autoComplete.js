@@ -80,7 +80,6 @@
           value: '',
           configuration: {
             dependsOn: 'model',
-            apiVersion: 'v1',
             condition: {
               type: 'SHOW',
               option: 'optionType',
@@ -139,15 +138,45 @@
         },
         {
           type: 'TOGGLE',
+          label: 'Free solo',
+          key: 'freeSolo',
+          value: false,
+          configuration: {
+            condition: {
+              type: 'SHOW',
+              option: 'optionType',
+              comparator: 'EQ',
+              value: 'model',
+            },
+          },
+        },
+        {
+          type: 'TOGGLE',
           label: 'Allow multiple values',
           key: 'multiple',
           value: false,
+          configuration: {
+            condition: {
+              type: 'SHOW',
+              option: 'optionType',
+              comparator: 'EQ',
+              value: 'model',
+            },
+          },
         },
         {
           type: 'TOGGLE',
           label: 'Add checkboxes',
           key: 'renderCheckboxes',
           value: false,
+          configuration: {
+            condition: {
+              type: 'SHOW',
+              option: 'multiple',
+              comparator: 'EQ',
+              value: true,
+            },
+          },
         },
         {
           type: 'TOGGLE',
@@ -156,21 +185,15 @@
           value: true,
         },
         {
-          type: 'TOGGLE',
-          label: 'Free solo',
-          key: 'freeSolo',
-          value: false,
-        },
-        {
           value: false,
           label: 'Error',
-          key: 'error',
+          key: 'showError',
           type: 'TOGGLE',
         },
         {
           value: 'built-in',
           label: 'Error message',
-          key: 'showError',
+          key: 'errorType',
           type: 'CUSTOM',
           configuration: {
             as: 'BUTTONGROUP',
@@ -448,6 +471,20 @@
           label: 'name attribute',
           key: 'nameAttribute',
           value: [],
+          configuration: {
+            condition: {
+              type: 'SHOW',
+              option: 'advancedSettings',
+              comparator: 'EQ',
+              value: true,
+            },
+          },
+        },
+        {
+          type: 'VARIABLE',
+          label: 'Test attribute',
+          key: 'dataComponentAttribute',
+          value: ['AutoComplete'],
           configuration: {
             condition: {
               type: 'SHOW',

@@ -13,7 +13,6 @@
       ClickAwayListener,
       MenuList,
     } = window.MaterialUI.Core;
-    const { Icons } = window.MaterialUI;
 
     const {
       buttonText,
@@ -27,9 +26,10 @@
       size,
       type,
       variant,
+      dataComponentAttribute,
     } = options;
 
-    const { Children, env, useText } = B;
+    const { Children, env, useText, Icon } = B;
     const isDev = env === 'dev';
     const isIcon = variant === 'icon';
     const buttonContent = useText(buttonText);
@@ -124,7 +124,7 @@
     const generalProps = {
       disabled,
       size,
-      tabindex: isDev && -1,
+      tabIndex: isDev ? -1 : undefined,
     };
 
     const iconButtonProps = {
@@ -168,28 +168,25 @@
         startIcon={
           !isIcon &&
           icon !== 'None' &&
-          iconPosition === 'start' &&
-          React.createElement(Icons[icon])
+          iconPosition === 'start' && <Icon name={icon} />
         }
         endIcon={
           !isIcon &&
           icon !== 'None' &&
-          iconPosition === 'end' &&
-          React.createElement(Icons[icon])
+          iconPosition === 'end' && <Icon name={icon} />
         }
         onClick={handleToggle}
         onTouchEnd={e => e.stopPropagation()}
       >
-        {isIcon &&
-          React.createElement(Icons[icon === 'None' ? 'Error' : icon], {
-            fontSize: size,
-          })}
+        {isIcon && (
+          <Icon name={icon === 'None' ? 'Error' : icon} fontSize={size} />
+        )}
         {!isIcon && buttonContent}
       </ButtonComp>
     );
 
     const MenuComp = (
-      <>
+      <div data-component={useText(dataComponentAttribute) || 'Menu'}>
         {ButtonComponent}
         {!isDev ? (
           <Popper
@@ -224,7 +221,7 @@
             </Paper>
           )
         )}
-      </>
+      </div>
     );
 
     return !isDev ? (

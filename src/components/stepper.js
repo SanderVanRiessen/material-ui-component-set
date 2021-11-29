@@ -13,8 +13,7 @@
       MobileStepper,
       Button,
     } = window.MaterialUI.Core;
-    const { Icons } = window.MaterialUI;
-    const { env, useText, Children } = B;
+    const { env, useText, Children, Icon } = B;
     const {
       activeStep: stepIndex,
       variant,
@@ -23,6 +22,7 @@
       allSteps,
       buttonNext,
       buttonPrev,
+      dataComponentAttribute,
     } = options;
 
     const isDev = env === 'dev';
@@ -75,6 +75,7 @@
           activeStep={activeStep}
           orientation={type}
           classes={{ root: classes.root }}
+          data-component={useText(dataComponentAttribute) || 'Stepper'}
         >
           {React.Children.map(children, (child, index) => {
             const { options: childOptions = {} } = child.props || {};
@@ -96,13 +97,15 @@
             }
 
             const IconCmp = () =>
-              hasIcon &&
-              React.createElement(Icons[icon], {
-                className: [
-                  classes.stepIcon,
-                  isActive ? classes.stepIconActive : '',
-                ].join(' '),
-              });
+              hasIcon && (
+                <Icon
+                  name={icon}
+                  className={[
+                    classes.stepIcon,
+                    isActive ? classes.stepIconActive : '',
+                  ].join(' ')}
+                />
+              );
 
             if (hasIcon) {
               labelProps = {
@@ -136,7 +139,6 @@
                 {type === 'vertical' && (
                   <StepContent>
                     <Children
-                      stepLabelData={stepLabelData}
                       setStepLabelData={setStepLabelData}
                       active={isActive}
                       isFirstRender={numRendersRef.current === 1}
@@ -173,8 +175,6 @@
       </>
     );
 
-    const { KeyboardArrowLeft, KeyboardArrowRight } = Icons;
-
     const maxSteps = children.length;
 
     const MobileStepperCmp = (
@@ -203,7 +203,7 @@
               classes={{ root: classes.stepButtonMobile }}
             >
               {buttonNextText}
-              <KeyboardArrowRight />
+              <Icon name="KeyboardArrowRight" />
             </Button>
           }
           backButton={
@@ -213,10 +213,11 @@
               disabled={activeStep === 0}
               classes={{ root: classes.stepButtonMobile }}
             >
-              <KeyboardArrowLeft />
+              <Icon name="KeyboardArrowLeft" />
               {buttonPrevText}
             </Button>
           }
+          data-component={useText(dataComponentAttribute) || 'Stepper'}
         />
       </>
     );

@@ -9,6 +9,10 @@ interface Page {
   url: string;
 }
 
+interface History {
+  push(url: string): string;
+}
+
 function login({
   event,
   redirectTo,
@@ -20,8 +24,13 @@ function login({
   const { url } = redirectTo;
 
   if (isValid) {
+    const decodedToken = JSON.parse(window.atob(jwtToken.split('.')[1]));
+    if (decodedToken && decodedToken.locale) {
+      document.cookie = `BBLocale=${decodedToken.locale}`;
+    }
+
     localStorage.setItem('TOKEN', jwtToken);
     localStorage.setItem('REFRESH_TOKEN', refreshToken);
-    window.location.href = url;
+    history.push(url);
   }
 }

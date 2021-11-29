@@ -5,7 +5,6 @@
   orientation: 'HORIZONTAL',
   jsx: (() => {
     const { CircularProgress, MenuItem } = window.MaterialUI.Core;
-    const { Icons } = window.MaterialUI;
     const {
       actionId,
       actionModels,
@@ -19,6 +18,7 @@
       linkType,
       openLinkToExternal,
       primaryText,
+      dataComponentAttribute,
     } = options;
     const { onClick } = parent;
     const {
@@ -29,6 +29,7 @@
       useAction,
       useProperty,
       useText,
+      Icon,
     } = B;
     const [isLoading, setIsLoading] = useState(false);
 
@@ -102,14 +103,11 @@
           if (onClick) onClick(e);
           actionCallback();
         }}
+        data-component={useText(dataComponentAttribute) || 'MenuItem'}
       >
-        {icon !== 'None' &&
-          iconPosition === 'start' &&
-          React.createElement(Icons[icon])}
+        {icon !== 'None' && iconPosition === 'start' && <Icon name={icon} />}
         {primary}
-        {icon !== 'None' &&
-          iconPosition === 'end' &&
-          React.createElement(Icons[icon])}
+        {icon !== 'None' && iconPosition === 'end' && <Icon name={icon} />}
         {isLoading && <CircularProgress size={16} className={classes.loader} />}
       </MenuItem>
     );

@@ -10,8 +10,7 @@
       ExpansionPanelDetails,
       Typography,
     } = window.MaterialUI.Core;
-    const { ExpandMore } = window.MaterialUI.Icons;
-    const { useText, env } = B;
+    const { useText, env, Icon } = B;
     const isDev = env === 'dev';
     const isEmpty = children.length === 0;
     const isPristine = isEmpty && isDev;
@@ -22,6 +21,7 @@
       square,
       variant,
       elevation,
+      dataComponentAttribute,
     } = options;
     const Variant = {
       Title1: 'h1',
@@ -74,11 +74,12 @@
       variant,
       elevation: variant === 'flat' ? 0 : elevation,
       expanded,
+      'data-component': useText(dataComponentAttribute) || 'ExpansionPanel',
     };
 
     const panelSummaryOptions = {
       onClick,
-      expandIcon: <ExpandMore />,
+      expandIcon: <Icon name="ExpandMore" />,
     };
 
     const ExpansionPanelComponent = (

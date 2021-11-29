@@ -9,12 +9,12 @@
         const {
           env,
           getProperty,
-          GetMe,
           InteractionScope,
           ModelProvider,
           useAllQuery,
           useFilter,
           useText,
+          Icon,
         } = B;
         const [page, setPage] = useState(1);
         const [search, setSearch] = useState('');
@@ -26,7 +26,6 @@
           filter,
           type,
           model,
-          authProfile,
           showError,
           hideSearch,
           searchProperty,
@@ -35,11 +34,11 @@
           pagination,
           loadingType,
           loadingText,
+          dataComponentAttribute,
         } = options;
 
         const rowsPerPage = parseInt(take, 10) || 50;
         const { TextField, InputAdornment } = window.MaterialUI.Core;
-        const { Search } = window.MaterialUI.Icons;
         const { label: searchPropertyLabel } =
           getProperty(searchProperty) || {};
         const parsedLoadingText = useText(loadingText);
@@ -56,13 +55,13 @@
         const [interactionFilter, setInteractionFilter] = useState({});
 
         const builderLayout = () => (
-          <>
+          <div data-component={useText(dataComponentAttribute) || 'DataList'}>
             {searchProperty && !hideSearch && (
               <div className={classes.header}>
                 <SearchComponent label={searchPropertyLabel} />
               </div>
             )}
-            <div ref={listRef} className={isGrid && classes.grid}>
+            <div ref={listRef} className={isGrid ? classes.grid : undefined}>
               <div
                 className={
                   [
@@ -89,7 +88,7 @@
                 />
               </div>
             )}
-          </>
+          </div>
         );
 
         useEffect(() => {
@@ -342,14 +341,14 @@
           B.triggerEvent('OnItemClick', event, context);
         };
 
-        const Looper = results => {
-          const rows = results.map(item => (
+        const Looper = results =>
+          results.map(item => (
             <ModelProvider key={item.id} value={item} id={model}>
               <InteractionScope model={model}>
                 {context => (
                   <div
                     role="none"
-                    className={isInline && classes.inline}
+                    className={isInline ? classes.inline : undefined}
                     onClick={event => handleClick(event, context)}
                   >
                     {children}
@@ -358,13 +357,6 @@
               </InteractionScope>
             </ModelProvider>
           ));
-
-          if (authProfile) {
-            return <GetMe authenticationProfileId={authProfile}>{rows}</GetMe>;
-          }
-
-          return rows;
-        };
 
         const canvasLayout = () => {
           if (!model) {
@@ -392,14 +384,26 @@
           }
 
           if (error && displayError) {
-            return <span>{error.message}</span>;
+            return (
+              <span
+                data-component={
+                  useText(dataComponentAttribute) || 'DataContainer'
+                }
+              >
+                {error.message}
+              </span>
+            );
           }
 
           const { results = [], totalCount } = data || {};
           const resultCount = results && results.length;
 
           return (
-            <>
+            <div
+              data-component={
+                useText(dataComponentAttribute) || 'DataContainer'
+              }
+            >
               {searchProperty && !hideSearch && (
                 <div className={classes.header}>
                   <SearchComponent
@@ -427,7 +431,7 @@
                   />
                 </div>
               )}
-            </>
+            </div>
           );
         };
 
@@ -457,7 +461,7 @@
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Search />
+                      <Icon name="Search" />
                     </InputAdornment>
                   ),
                 }}

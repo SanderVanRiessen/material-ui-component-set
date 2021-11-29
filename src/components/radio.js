@@ -7,7 +7,7 @@
     const {
       disabled,
       row,
-      helperText,
+      helperText = [''],
       radioOptions,
       model,
       optionType,
@@ -22,10 +22,11 @@
       hideLabel,
       customModelAttribute: customModelAttributeObj,
       property,
-      validationValueMissing,
+      validationValueMissing = [''],
       nameAttribute,
       order,
       orderBy,
+      dataComponentAttribute = ['Radio'],
     } = options;
     const {
       env,
@@ -72,6 +73,11 @@
     const [helper, setHelper] = useState(useText(helperText));
     const mounted = useRef(false);
     let radioValues = [];
+
+    const validationValueMissingText = useText(validationValueMissing);
+    const helperTextResolved = useText(helperText);
+    const dataComponentAttributeValue = useText(dataComponentAttribute);
+    const defaultValueText = useText(defaultValue);
 
     const {
       FormControl: MUIFormControl,
@@ -147,7 +153,7 @@
       <MUIFormControlLabel
         disabled={disabled}
         value={optionValue}
-        control={<Radio tabIndex={isDev && -1} size={size} />}
+        control={<Radio tabIndex={isDev ? -1 : undefined} size={size} />}
         label={optionLabel}
         labelPlacement={position}
       />
@@ -160,7 +166,7 @@
       }
       if (optionType === 'static') {
         radioValues = radioData.map(option => option);
-        return radioData.map(option => renderRadio(option, option));
+        return radioData.map(option => renderRadio(getValue(option), option));
       }
       if (isDev) return renderRadio('value', 'Placeholder');
       if (loading) return <span>Loading...</span>;
@@ -176,8 +182,8 @@
       const hasError = required && !radioValues.includes(value);
       setErrorState(hasError);
       const message = hasError
-        ? useText(validationValueMissing)
-        : useText(helperText);
+        ? validationValueMissingText
+        : helperTextResolved;
       setHelper(message);
     };
 
@@ -197,9 +203,10 @@
 
     useEffect(() => {
       if (isDev) {
-        setValue(useText(defaultValue));
+        setValue(defaultValueText);
+        setHelper(helperTextResolved);
       }
-    }, [isDev, defaultValue]);
+    }, [isDev, defaultValueText, helperTextResolved]);
 
     const FormControl = (
       <MUIFormControl
@@ -218,6 +225,7 @@
           onChange={handleChange}
           onBlur={validationHandler}
           aria-label={labelText}
+          data-component={dataComponentAttributeValue}
         >
           {renderRadios()}
         </RadioGroup>

@@ -6,7 +6,6 @@
   styleType: 'BUTTON',
   jsx: (() => {
     const { CircularProgress, Tooltip, Link } = window.MaterialUI.Core;
-    const { Icons } = window.MaterialUI;
     const {
       disabled,
       size,
@@ -25,6 +24,7 @@
       hasVisibleTooltip,
       tooltipContent,
       tooltipPlacement,
+      dataComponentAttribute,
     } = options;
     const {
       env,
@@ -34,6 +34,7 @@
       useAction,
       useProperty,
       useEndpoint,
+      Icon,
     } = B;
     const isDev = env === 'dev';
     const isAction = linkType === 'action' || !!actionId;
@@ -114,22 +115,22 @@
 
     const getExternalHref = config => {
       if (config.disabled) {
-        return false;
+        return undefined;
       }
       if (config.linkToExternal && config.linkToExternal.id !== '') {
         return config.linkToExternalVariable;
       }
-      return false;
+      return undefined;
     };
 
     const getInternalHref = config => {
       if (config.disabled) {
-        return false;
+        return undefined;
       }
       if (config.linkTo && config.linkTo.id !== '') {
         return config.linkToInternalVariable;
       }
-      return false;
+      return undefined;
     };
 
     const showIndicator = isLoading || loading;
@@ -143,7 +144,7 @@
 
     const buttonProps = {
       disabled: disabled || isLoading || loading,
-      tabindex: isDev && -1,
+      tabIndex: isDev ? -1 : undefined,
       onClick: event => {
         event.stopPropagation();
         actionCallback();
@@ -152,6 +153,7 @@
       type: isDev ? 'button' : type,
       endpoint:
         linkType === 'internal' && linkTo && linkTo.id ? linkTo : undefined,
+      'data-component': useText(dataComponentAttribute) || 'Button',
     };
 
     const anchorProps = {
@@ -161,7 +163,7 @@
         linkToExternalVariable,
       }),
       target: openLinkToExternal,
-      tabindex: isDev && -1,
+      tabIndex: isDev ? -1 : undefined,
       type: isDev ? 'button' : type,
       endpoint:
         linkType === 'internal' && linkTo && linkTo.id ? linkTo : undefined,
@@ -169,12 +171,14 @@
         event.stopPropagation();
         actionCallback();
       },
+      'data-component': useText(dataComponentAttribute) || 'Button',
     };
 
     const linkProps = {
       href: getInternalHref({ linkTo, linkToInternalVariable, disabled }),
       component: hasInteralLink ? B.Link : undefined,
       endpoint: hasInteralLink ? linkTo : undefined,
+      'data-component': useText(dataComponentAttribute) || 'Button',
     };
 
     const ButtonContent = (
@@ -191,7 +195,7 @@
                   display: 'flex',
                 }}
               >
-                {React.createElement(Icons[icon], { fontSize: size })}
+                <Icon name={icon} fontSize={size} />
               </span>
             )}
             {buttonContent !== '' ? buttonContent : emptySpace}
@@ -202,7 +206,7 @@
                   display: 'flex',
                 }}
               >
-                {React.createElement(Icons[icon], { fontSize: size })}
+                <Icon name={icon} fontSize={size} />
               </span>
             )}
           </>
@@ -215,7 +219,7 @@
 
     const LinkComponent =
       linkType === 'internal' ? (
-        <Link className={classes.linkComponent} {...linkProps}>
+        <Link className={classes.linkComponent} {...linkProps} underline="none">
           {ButtonContent}
         </Link>
       ) : (
@@ -279,70 +283,72 @@
         },
       },
       linkComponent: {
-        textDecoration: 'none',
-        display: ({ options: { fullWidth } }) =>
-          fullWidth ? 'inline-flex' : 'inline-block',
-        width: ({ options: { fullWidth, outerSpacing } }) =>
-          !fullWidth
-            ? 'auto'
-            : `calc(100% - ${getSpacing(outerSpacing[1])} - ${getSpacing(
-                outerSpacing[3],
-              )})`,
-        marginTop: ({ options: { outerSpacing } }) =>
-          getSpacing(outerSpacing[0]),
-        marginRight: ({ options: { outerSpacing } }) =>
-          getSpacing(outerSpacing[1]),
-        marginBottom: ({ options: { outerSpacing } }) =>
-          getSpacing(outerSpacing[2]),
-        marginLeft: ({ options: { outerSpacing } }) =>
-          getSpacing(outerSpacing[3]),
-        [`@media ${mediaMinWidth(600)}`]: {
-          width: ({ options: { fullWidth, outerSpacing } }) => {
-            if (!fullWidth) return 'auto';
-            const marginRight = getSpacing(outerSpacing[1], 'Portrait');
-            const marginLeft = getSpacing(outerSpacing[3], 'Portrait');
-            return `calc(100% - ${marginRight} - ${marginLeft})`;
-          },
+        '&, &.MuiTypography-root': {
+          textDecoration: 'none',
+          display: ({ options: { fullWidth } }) =>
+            fullWidth ? 'inline-flex' : 'inline-block',
+          width: ({ options: { fullWidth, outerSpacing } }) =>
+            !fullWidth
+              ? 'auto'
+              : `calc(100% - ${getSpacing(outerSpacing[1])} - ${getSpacing(
+                  outerSpacing[3],
+                )})`,
           marginTop: ({ options: { outerSpacing } }) =>
-            getSpacing(outerSpacing[0], 'Portrait'),
+            getSpacing(outerSpacing[0]),
           marginRight: ({ options: { outerSpacing } }) =>
-            getSpacing(outerSpacing[1], 'Portrait'),
+            getSpacing(outerSpacing[1]),
           marginBottom: ({ options: { outerSpacing } }) =>
-            getSpacing(outerSpacing[2], 'Portrait'),
+            getSpacing(outerSpacing[2]),
           marginLeft: ({ options: { outerSpacing } }) =>
-            getSpacing(outerSpacing[3], 'Portrait'),
-        },
-        [`@media ${mediaMinWidth(960)}`]: {
-          width: ({ options: { fullWidth, outerSpacing } }) => {
-            if (!fullWidth) return 'auto';
-            const marginRight = getSpacing(outerSpacing[1], 'Landscape');
-            const marginLeft = getSpacing(outerSpacing[3], 'Landscape');
-            return `calc(100% - ${marginRight} - ${marginLeft})`;
+            getSpacing(outerSpacing[3]),
+          [`@media ${mediaMinWidth(600)}`]: {
+            width: ({ options: { fullWidth, outerSpacing } }) => {
+              if (!fullWidth) return 'auto';
+              const marginRight = getSpacing(outerSpacing[1], 'Portrait');
+              const marginLeft = getSpacing(outerSpacing[3], 'Portrait');
+              return `calc(100% - ${marginRight} - ${marginLeft})`;
+            },
+            marginTop: ({ options: { outerSpacing } }) =>
+              getSpacing(outerSpacing[0], 'Portrait'),
+            marginRight: ({ options: { outerSpacing } }) =>
+              getSpacing(outerSpacing[1], 'Portrait'),
+            marginBottom: ({ options: { outerSpacing } }) =>
+              getSpacing(outerSpacing[2], 'Portrait'),
+            marginLeft: ({ options: { outerSpacing } }) =>
+              getSpacing(outerSpacing[3], 'Portrait'),
           },
-          marginTop: ({ options: { outerSpacing } }) =>
-            getSpacing(outerSpacing[0], 'Landscape'),
-          marginRight: ({ options: { outerSpacing } }) =>
-            getSpacing(outerSpacing[1], 'Landscape'),
-          marginBottom: ({ options: { outerSpacing } }) =>
-            getSpacing(outerSpacing[2], 'Landscape'),
-          marginLeft: ({ options: { outerSpacing } }) =>
-            getSpacing(outerSpacing[3], 'Landscape'),
-        },
-        [`@media ${mediaMinWidth(1280)}`]: {
-          width: ({ options: { fullWidth, outerSpacing } }) => {
-            if (!fullWidth) return 'auto';
-            const marginRight = getSpacing(outerSpacing[1], 'Desktop');
-            const marginLeft = getSpacing(outerSpacing[3], 'Desktop');
-            return `calc(100% - ${marginRight} - ${marginLeft})`;
+          [`@media ${mediaMinWidth(960)}`]: {
+            width: ({ options: { fullWidth, outerSpacing } }) => {
+              if (!fullWidth) return 'auto';
+              const marginRight = getSpacing(outerSpacing[1], 'Landscape');
+              const marginLeft = getSpacing(outerSpacing[3], 'Landscape');
+              return `calc(100% - ${marginRight} - ${marginLeft})`;
+            },
+            marginTop: ({ options: { outerSpacing } }) =>
+              getSpacing(outerSpacing[0], 'Landscape'),
+            marginRight: ({ options: { outerSpacing } }) =>
+              getSpacing(outerSpacing[1], 'Landscape'),
+            marginBottom: ({ options: { outerSpacing } }) =>
+              getSpacing(outerSpacing[2], 'Landscape'),
+            marginLeft: ({ options: { outerSpacing } }) =>
+              getSpacing(outerSpacing[3], 'Landscape'),
           },
-          marginTop: ({ options: { outerSpacing } }) =>
-            getSpacing(outerSpacing[0], 'Desktop'),
-          marginRight: ({ options: { outerSpacing } }) =>
-            getSpacing(outerSpacing[1], 'Desktop'),
-          marginBottom: ({ options: { outerSpacing } }) =>
-            getSpacing(outerSpacing[2], 'Desktop'),
-          marginLeft: ({ options: { outerSpacing } }) =>
-            getSpacing(outerSpacing[3], 'Desktop'),
+          [`@media ${mediaMinWidth(1280)}`]: {
+            width: ({ options: { fullWidth, outerSpacing } }) => {
+              if (!fullWidth) return 'auto';
+              const marginRight = getSpacing(outerSpacing[1], 'Desktop');
+              const marginLeft = getSpacing(outerSpacing[3], 'Desktop');
+              return `calc(100% - ${marginRight} - ${marginLeft})`;
+            },
+            marginTop: ({ options: { outerSpacing } }) =>
+              getSpacing(outerSpacing[0], 'Desktop'),
+            marginRight: ({ options: { outerSpacing } }) =>
+              getSpacing(outerSpacing[1], 'Desktop'),
+            marginBottom: ({ options: { outerSpacing } }) =>
+              getSpacing(outerSpacing[2], 'Desktop'),
+            marginLeft: ({ options: { outerSpacing } }) =>
+              getSpacing(outerSpacing[3], 'Desktop'),
+          },
         },
       },
       button: {

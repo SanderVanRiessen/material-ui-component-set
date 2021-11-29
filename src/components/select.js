@@ -10,7 +10,7 @@
       size,
       fullWidth,
       margin,
-      helperText,
+      helperText = [''],
       selectOptions = '',
       model,
       filter,
@@ -21,11 +21,12 @@
       hideLabel,
       customModelAttribute: customModelAttributeObj,
       property,
-      validationValueMissing,
+      validationValueMissing = [''],
       nameAttribute,
       order,
       orderBy,
       blanco,
+      dataComponentAttribute = ['Select'],
     } = options;
     const {
       env,
@@ -70,6 +71,11 @@
     const { name: labelName } = getProperty(labelProp) || {};
     const { name: propName } = getProperty(valueProp) || {};
 
+    const defaultValueText = useText(defaultValue);
+    const helperTextResolved = useText(helperText);
+    const validationMessageText = useText(validationValueMissing);
+    const dataComponentAttributeValue = useText(dataComponentAttribute);
+
     const transformValue = arg => {
       if (arg instanceof Date) {
         return arg.toISOString();
@@ -99,7 +105,7 @@
       }, {});
     };
 
-    B.defineFunction('Reset', () => setCurrentValue(useText(defaultValue)));
+    B.defineFunction('Reset', () => setCurrentValue(defaultValueText));
 
     const orderByArray = [orderBy].flat();
     const sort =
@@ -214,7 +220,7 @@
     const handleValidation = () => {
       const hasError = required && !value;
       setErrorState(hasError);
-      const message = useText(hasError ? validationValueMissing : helperText);
+      const message = hasError ? validationMessageText : helperTextResolved;
       setHelper(message);
     };
 
@@ -238,9 +244,9 @@
 
     useEffect(() => {
       if (isDev) {
-        setCurrentValue(useText(defaultValue));
+        setCurrentValue(defaultValueText);
       }
-    }, [isDev, defaultValue]);
+    }, [isDev, defaultValueText]);
 
     const renderOptions = () => {
       if (kind === 'list' || kind === 'LIST') {
@@ -285,6 +291,7 @@
           inputProps={{
             name: nameAttributeValue || customModelAttributeName,
             tabIndex: isDev ? -1 : 0,
+            'data-component': dataComponentAttributeValue,
           }}
           required={required}
           disabled={disabled}

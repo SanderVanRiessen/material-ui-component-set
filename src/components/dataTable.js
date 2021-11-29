@@ -8,12 +8,12 @@
       Children,
       env,
       getProperty,
-      GetMe,
       InteractionScope,
       ModelProvider,
       useAllQuery,
       useFilter,
       useText,
+      Icon,
     } = B;
     const {
       Table,
@@ -28,14 +28,12 @@
       TextField,
       InputAdornment,
     } = window.MaterialUI.Core;
-    const { Search } = window.MaterialUI.Icons;
     const isDev = env === 'dev';
     const {
       take,
       placeholderTake,
       size,
       model,
-      authProfile,
       filter,
       searchProperty,
       hideSearch,
@@ -55,6 +53,7 @@
       showError,
       autoLoadOnScroll,
       autoLoadTakeAmount,
+      dataComponentAttribute,
     } = options;
     const repeaterRef = React.createRef();
     const tableRef = React.createRef();
@@ -72,6 +71,8 @@
     const [searchTerm, setSearchTerm] = useState('');
     const [showPagination, setShowPagination] = useState(false);
     const [interactionFilter, setInteractionFilter] = useState({});
+    const perPageLabel = useText(labelRowsPerPage);
+    const numOfPagesLabel = useText(labelNumberOfPages);
 
     const { label: searchPropertyLabel = '{property}' } =
       getProperty(searchProperty) || {};
@@ -164,6 +165,7 @@
      * @returns {Void}
      */
     B.defineFunction('Filter', ({ event, property, interactionId }) => {
+      if (typeof event === 'undefined') return;
       setInteractionFilter({
         ...interactionFilter,
         [interactionId]: {
@@ -435,7 +437,7 @@
         ));
       }
 
-      const rows = results.map(value => (
+      return results.map(value => (
         <ModelProvider value={value} id={model}>
           <InteractionScope model={model}>
             {context => (
@@ -456,12 +458,6 @@
           </InteractionScope>
         </ModelProvider>
       ));
-
-      if (authProfile) {
-        return <GetMe authenticationProfileId={authProfile}>{rows}</GetMe>;
-      }
-
-      return rows;
     };
 
     const renderTableContent = () => {
@@ -591,7 +587,10 @@
     }, [showPagination, hasToolbar]);
 
     return (
-      <div className={classes.root}>
+      <div
+        className={classes.root}
+        data-component={useText(dataComponentAttribute) || 'DataTable'}
+      >
         <Paper
           classes={{ root: classes.paper }}
           square={square}
@@ -610,7 +609,7 @@
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Search />
+                        <Icon name="Search" />
                       </InputAdornment>
                     ),
                   }}
@@ -645,9 +644,9 @@
               ref={paginationRef}
               classes={{ root: classes.pagination }}
               rowsPerPageOptions={[5, 10, 25, 50, 100]}
-              labelRowsPerPage={useText(labelRowsPerPage)}
+              labelRowsPerPage={perPageLabel}
               labelDisplayedRows={({ from, to, count }) =>
-                `${from}-${to} ${useText(labelNumberOfPages)} ${count}`
+                `${from}-${to} ${numOfPagesLabel} ${count}`
               }
               component="div"
               count={model ? totalCount : takeNum}
@@ -737,6 +736,15 @@
             '!important',
           ],
         },
+
+        '& > div > .MuiTableCell-head, & > .MuiTableCell-head': {
+          textOverflow: ({ options: { hideTextOverflow } }) =>
+            hideTextOverflow ? 'ellipsis' : 'clip',
+          overflow: ({ options: { hideTextOverflow } }) =>
+            hideTextOverflow ? 'hidden' : 'visible',
+          whiteSpace: ({ options: { hideTextOverflow } }) =>
+            hideTextOverflow ? 'nowrap' : 'normal',
+        },
       },
       bodyRow: {
         cursor: ({ options: { linkTo } }) =>
@@ -749,6 +757,14 @@
           backgroundColor: ({ options: { striped, stripeColor } }) => [
             striped ? style.getColor(stripeColor) : 'transparent',
           ],
+        },
+        '& > .MuiTableCell-root, & ~ .MuiTableCell-root': {
+          textOverflow: ({ options: { hideTextOverflow } }) =>
+            hideTextOverflow ? 'ellipsis' : 'clip',
+          overflow: ({ options: { hideTextOverflow } }) =>
+            hideTextOverflow ? 'hidden' : 'visible',
+          whiteSpace: ({ options: { hideTextOverflow } }) =>
+            hideTextOverflow ? 'nowrap' : 'normal',
         },
       },
       searchField: {

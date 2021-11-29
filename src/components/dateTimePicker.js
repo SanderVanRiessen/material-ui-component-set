@@ -8,7 +8,7 @@
       autoComplete,
       disabled,
       error,
-      placeholder,
+      placeholder = [''],
       variant,
       inputvariant,
       type,
@@ -18,7 +18,7 @@
       size,
       fullWidth,
       margin,
-      helperText,
+      helperText = [''],
       disableToolbar,
       disablePastDates,
       hideLabel,
@@ -28,8 +28,9 @@
       nameAttribute,
       locale,
       clearable,
+      dataComponentAttribute = ['DateTimePicker'],
     } = options;
-    const { env, getCustomModelAttribute, useText } = B;
+    const { env, getCustomModelAttribute, useText, Icon } = B;
     const {
       MuiPickersUtilsProvider,
       KeyboardTimePicker,
@@ -38,12 +39,12 @@
     } = window.MaterialUI.Pickers;
     const { DateFnsUtils } = window.MaterialUI;
     const { nlLocale, enLocale } = window.MaterialUI.DateLocales;
-    const { AccessTime, Event } = window.MaterialUI.Icons;
     const DateFns = new DateFnsUtils();
     const isDev = env === 'dev';
     const [selectedDate, setSelectedDate] = useState(null);
     const helper = useText(helperText);
     const placeholderText = useText(placeholder);
+    const dataComponentAttributeValue = useText(dataComponentAttribute);
 
     const localeMap = {
       nl: nlLocale,
@@ -70,11 +71,14 @@
     const isValidDate = date => date instanceof Date && !isNaN(date);
 
     const convertToDate = date => {
-      const dateString = `${date.getFullYear()}-${String(
-        date.getMonth() + 1,
-      ).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+      if (isValidDate(date)) {
+        const dateString = `${date.getFullYear()}-${String(
+          date.getMonth() + 1,
+        ).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
-      return dateString;
+        return dateString;
+      }
+      return '';
     };
 
     const changeHandler = date => {
@@ -163,11 +167,11 @@
         InputProps={{
           inputProps: {
             name: nameAttributeValue || customModelAttributeName,
-            tabIndex: isDev && -1,
+            tabIndex: isDev ? -1 : undefined,
           },
         }}
         KeyboardButtonProps={{
-          tabIndex: isDev && -1,
+          tabIndex: isDev ? -1 : undefined,
         }}
         required={required}
         disabled={disabled}
@@ -178,6 +182,7 @@
         disableToolbar={disableToolbar}
         disablePast={disablePastDates}
         format={format}
+        data-component={dataComponentAttributeValue}
         PopoverProps={{
           classes: {
             root: classes.popover,
@@ -187,7 +192,9 @@
           className: classes.dialog,
         }}
         ampm={!use24HourClock}
-        keyboardIcon={type === 'time' ? <AccessTime /> : <Event />}
+        keyboardIcon={
+          type === 'time' ? <Icon name="AccessTime" /> : <Icon name="Event" />
+        }
         clearable={clearable}
       />
     );

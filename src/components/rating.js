@@ -4,10 +4,9 @@
   allowedTypes: [],
   orientation: 'VERTICAL',
   jsx: (() => {
-    const { Icons } = window.MaterialUI;
     const { FormControl, FormHelperText, InputLabel } = window.MaterialUI.Core;
     const { Rating } = window.MaterialUI.Lab;
-    const { env, getCustomModelAttribute, useText } = B;
+    const { env, getCustomModelAttribute, useText, Icon } = B;
     const isDev = env === 'dev';
 
     const {
@@ -21,9 +20,10 @@
       precision,
       icon,
       nameAttribute,
-      validationValueMissing,
+      validationValueMissing = [''],
       error,
-      helperText,
+      helperText = [''],
+      dataComponentAttribute = ['Rating'],
     } = options;
 
     const {
@@ -33,6 +33,13 @@
     } = customModelAttributeObj;
     const labelText = useText(label);
 
+    const [currentValue, setCurrentValue] = useState(useText(defaultValue));
+
+    const value = useText(defaultValue);
+    useEffect(() => {
+      setCurrentValue(value);
+    }, [value]);
+
     const customModelAttribute = getCustomModelAttribute(
       customModelAttributeId,
     );
@@ -40,26 +47,27 @@
     const [errorState, setErrorState] = useState(error);
     const [helper, setHelper] = useState(useText(helperText));
     const [afterFirstInvalidation, setAfterFirstInvalidation] = useState(false);
-    const [currentValue, setCurrentValue] = useState(useText(defaultValue));
-    const value = currentValue;
 
-    const IconComponent = React.createElement(Icons[icon], {
-      className: classes.ratingIcon,
-    });
+    const IconComponent = <Icon name={icon} className={classes.ratingIcon} />;
 
     const { name: customModelAttributeName, validations: { required } = {} } =
       customModelAttribute || {};
     const nameAttributeValue = useText(nameAttribute);
 
+    const defaultValueText = useText(defaultValue);
+    const helperTextResolved = useText(helperText);
+    const validationMessageText = useText(validationValueMissing);
+    const dataComponentAttributeValue = useText(dataComponentAttribute);
+
     const handleValidation = () => {
-      const hasError = required && !value;
+      const hasError = required && !currentValue;
       setErrorState(hasError);
-      const message = useText(hasError ? validationValueMissing : helperText);
+      const message = hasError ? validationMessageText : helperTextResolved;
       setHelper(message);
     };
 
     const validationHandler = () => {
-      const hasError = required && !value;
+      const hasError = required && !currentValue;
       setAfterFirstInvalidation(hasError);
       handleValidation();
     };
@@ -73,13 +81,16 @@
 
     useEffect(() => {
       if (isDev) {
-        setCurrentValue(useText(defaultValue));
-        setHelper(useText(helperText));
+        setCurrentValue(defaultValueText);
+        setHelper(helperTextResolved);
       }
-    }, [isDev, defaultValue, helperText]);
+    }, [isDev, defaultValueText, helperTextResolved]);
 
     const RatingComponent = (
-      <div className={classes.root}>
+      <div
+        className={classes.root}
+        data-component={dataComponentAttributeValue}
+      >
         <FormControl
           classes={{
             root: labelText.length !== 0 && !hideLabel && classes.formControl,
@@ -96,8 +107,7 @@
           <Rating
             className={classes.ratingIcon}
             name={nameAttributeValue || customModelAttributeName}
-            value={value}
-            defaultValue={customModelAttributeObj.value}
+            value={currentValue}
             precision={precision}
             size={size === 'custom' ? customSize : size}
             onChange={handleChange}
@@ -119,7 +129,7 @@
             type="text"
             tabIndex="-1"
             required={required}
-            value={value}
+            value={currentValue}
           />
         </FormControl>
       </div>

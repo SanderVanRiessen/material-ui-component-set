@@ -5,8 +5,7 @@
   orientation: 'VERTICAL',
   jsx: (() => {
     const { Avatar } = window.MaterialUI.Core;
-    const { Icons } = window.MaterialUI;
-    const { env, useText } = B;
+    const { env, useText, Icon } = B;
     const {
       type,
       imgUrl,
@@ -16,6 +15,7 @@
       variant,
       width,
       height,
+      dataComponentAttribute,
     } = options;
 
     const isDev = env === 'dev';
@@ -26,7 +26,7 @@
     const imgSrc = useText(imgUrl);
     const altText = useText(imgAlt);
 
-    const IconComponent = React.createElement(Icons[icon]);
+    const IconComponent = <Icon name={icon} />;
 
     const styleOptions = {
       width,
@@ -40,6 +40,7 @@
         src={isImage && imgSrc}
         className={classes.avatar}
         style={styleOptions}
+        data-component={useText(dataComponentAttribute) || 'Avatar'}
       >
         {isLetter && useText(letter)}
         {isIcon && IconComponent}

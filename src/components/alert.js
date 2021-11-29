@@ -5,10 +5,8 @@
   orientation: 'HORIZONTAL',
   jsx: (() => {
     const { Alert, AlertTitle } = window.MaterialUI.Lab;
-    const { Close } = window.MaterialUI.Icons;
-    const { Icons } = window.MaterialUI;
     const { IconButton } = window.MaterialUI.Core;
-    const { env, useText } = B;
+    const { env, useText, Icon } = B;
     const {
       visible,
       icon,
@@ -17,6 +15,7 @@
       bodyText,
       allowTextServerResponse,
       allowTitleServerResponse,
+      dataComponentAttribute,
     } = options;
     const title = useText(titleText);
     const body = useText(bodyText);
@@ -71,7 +70,7 @@
           root: classes.root,
         }}
         className={open || isDev ? '' : classes.hide}
-        icon={icon !== 'None' ? React.createElement(Icons[icon]) : null}
+        icon={icon !== 'None' ? <Icon name={icon} /> : null}
         action={
           collapsable ? (
             <IconButton
@@ -81,10 +80,11 @@
                 setOpen(false);
               }}
             >
-              <Close />
+              <Icon name="Close" />
             </IconButton>
           ) : null
         }
+        data-component={useText(dataComponentAttribute) || 'Alert'}
       >
         {(title || titleFromServer) && (
           <AlertTitle>
