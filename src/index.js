@@ -11,6 +11,19 @@ import * as Scheduler from '@devexpress/dx-react-scheduler';
 import * as MUIScheduler from '@devexpress/dx-react-scheduler-material-ui';
 import { add, sub } from 'date-fns';
 
+import {
+  ApolloProvider,
+  ApolloClient,
+  HttpLink,
+  InMemoryCache,
+  useQuery,
+  gql,
+} from '@apollo/client';
+import {
+  ApolloProvider as ApolloProvider2,
+  Query,
+} from '@apollo/react-components';
+
 import Icons from './icons';
 
 window.ExportHtml = ExportHtml;
@@ -30,4 +43,12 @@ export default {
   MUIScheduler,
   add,
   sub,
+  ApolloProvider,
+  ApolloClient,
+  ApolloProvider2,
+  Query,
+  HttpLink,
+  InMemoryCache,
+  useQuery,
+  gql,
 };
