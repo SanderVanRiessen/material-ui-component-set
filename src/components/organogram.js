@@ -9,32 +9,32 @@
     const [parentName, setParentName] = React.useState('CEO/VP');
     const isDev = env === 'dev';
     const GET_USERINFO = gql`
-    query Item {
-      allTeambridge {
-        results {
-          id
-          childTeam {
+      query Item {
+        allTeambridge {
+          results {
             id
-            name
-            hierarchyLevel
-                webusers {
+            childTeam {
+              id
+              name
+              hierarchyLevel
+              webusers {
                 id
                 firstName
                 lastName
                 profileImageUrl
               }
-          }
-          parentTeam {
-            id
-            name
-            hierarchyLevel
+            }
+            parentTeam {
+              id
+              name
+              hierarchyLevel
+            }
           }
         }
       }
-    }   
-    
     `;
-    //Creates the icon, link and name for the Card.
+
+    // Creates the icon, link and name for the Card.
     const TeamList = props => {
       const { teammembers } = props;
       if (teammembers.length > 0) {
@@ -51,12 +51,7 @@
                         alt="Betty Logo"
                       />
                     </div>
-                    <p>
-                      {user ? user.firstName +
-                          ' ' +
-                          user.lastName
-                        : ' '}
-                    </p>
+                    <p>{user ? `${user.firstName} ${user.lastName}` : ' '}</p>
                   </div>
                 </a>
               </>
@@ -64,7 +59,6 @@
           </>
         );
       }
-      return;
     };
     
     const CardManager = (props) => {
@@ -80,112 +74,119 @@
         );
       }
       return <a>hello world</a>;
-    }
-    B.defineFunction('Set Top Level Value', evt => setParentName(evt.target.innerText));
+    };
+    B.defineFunction('Set Top Level Value', evt =>
+      setParentName(evt.target.innerText),
+    );
     const Card = props => {
       const { cardData } = props;
-      const [ childVisibility, setChildVisibility ] = React.useState(true);
+      const [childVisibility, setChildVisibility] = React.useState(true);
       const toggleTeamList = props => {
         setChildVisibility(childVisibility => !childVisibility);
       };
-      const visibilityCheck = (childVisibility) => {
-        {childVisibility ? 
-          <Icon onClick={toggleTeamList} name="ExpandMore" />
-          :
-          <Icon onClick={toggleTeamList} name="ExpandLess" />
-          }
-      }
-      if (cardData) {
-          return (
-            <li key={cardData.id}>
-                <span>
-                  <div>
-                    <h4>{cardData.childName}</h4> 
-                    {cardData.childArray?.length > 0 ? 
-                      childVisibility ?  
-                      <Icon onClick={toggleTeamList} name ="ExpandMore" />
-                      :
-                    <Icon onClick={toggleTeamList} name="ExpandLess" />
-                    : null 
-                  }
-                  </div>
-                  <div className={classes.employee_list}>
-                      {cardData.childWebusers.length > 0 && (
-                        <>
-                          <hr />
-                          <TeamList teammembers={cardData.childWebusers} />
-                        </>
-                      )}
-                  </div>
-                </span>
-                {
-                  childVisibility ?
-                  cardData.childArray?.length > 0 &&
-                  <ul>
-                  {cardData.childArray.map(child => (
-                    <Card cardData={child} visibility={childVisibility}/> 
-                ))
-                  }
-                </ul>
-                : null
-                  } 
-              </li>
+      const visibilityCheck = childVisibility => {
+        {
+          childVisibility ? (
+            <Icon onClick={toggleTeamList} name="ExpandMore" />
+          ) : (
+            <Icon onClick={toggleTeamList} name="ExpandLess" />
           );
+        }
+      };
+      if (cardData) {
+        return (
+          <li key={cardData.id}>
+            <span>
+              <div>
+                <h4>{cardData.childName}</h4>
+                {cardData.childArray.length > 0 ? (
+                  childVisibility ? (
+                    <Icon onClick={toggleTeamList} name="ExpandMore" />
+                  ) : (
+                    <Icon onClick={toggleTeamList} name="ExpandLess" />
+                  )
+                ) : null}
+              </div>
+              <div className={classes.employee_list}>
+                {cardData.childWebusers.length > 0 && (
+                  <>
+                    <hr />
+                    <TeamList teammembers={cardData.childWebusers} />
+                  </>
+                )}
+              </div>
+            </span>
+            {childVisibility
+              ? cardData.childArray.length > 0 && (
+                  <ul>
+                    {cardData.childArray.map(child => (
+                      <Card cardData={child} visibility={childVisibility} />
+                    ))}
+                  </ul>
+                )
+              : null}
+          </li>
+        );
       }
       return <> </>;
     };
     function SortJSON(data, ToplevelName) {
       const teams = [];
-      const jsonObj = []; 
-      data.allTeambridge.results.forEach((newTeam)  => {
-        var teamObject = {
+      const jsonObj = [];
+      data.allTeambridge.results.forEach(newTeam => {
+        const teamObject = {
           id: newTeam.id,
-          childId: newTeam.childTeam?.id,
-          childName: newTeam.childTeam?.name,
-          parentName: newTeam.parentTeam?.name,
-          childHierarchyLevel: newTeam.childTeam?.hierarchyLevel,
-          childWebusers: newTeam.childTeam?.webusers,
+          childId: newTeam.childTeam.id,
+          childName: newTeam.childTeam.name,
+          parentName: newTeam.parentTeam.name,
+          childHierarchyLevel: newTeam.childTeam.hierarchyLevel,
+          childWebusers: newTeam.childTeam.webusers,
           childArray: [],
         };
         // You now have a single dimension array of individual objects.
         teams.push(teamObject);
       });
-      
+
       // Find all child-teams of a team
-      teams.forEach((child) => {
-        if(child.parentName) {
-          if(teams.find(x => x.childName === child.parentName && child.parentName !== child.childName)) {
+      teams.forEach(child => {
+        if (child.parentName) {
+          if (
+            teams.find(
+              x =>
+                x.childName === child.parentName &&
+                child.parentName !== child.childName,
+            )
+          ) {
             const parentObj = teams.find(x => x.childName === child.parentName);
-            parentObj.childArray.push(child); 
+            parentObj.childArray.push(child);
           }
         }
         if (parentObj) {
           jsonObj.push(parentObj);
         }
       });
-      
-      //const uniqueObj is an Array
+
+      // const uniqueObj is an Array
       const uniqueObj = new Set();
-      const result = jsonObj.filter(
-        (el) => {
-          if (el.childHierarchyLevel === 0) { 
-            // adds the id to the Set (Array)
-            // check if the Set already contains this id
-            // if the id is in the array, it drops the record. If the id is not in the array, it adds the record to the Array. 
-            const duplicate = uniqueObj.has(el.id); 
-            uniqueObj.add(el.id)
-            return !duplicate
-          } else {
-            return false
-          }
+      const result = jsonObj.filter(el => {
+        if (el.childHierarchyLevel === 0) {
+          // adds the id to the Set (Array)
+          // check if the Set already contains this id
+          // if the id is in the array, it drops the record. If the id is not in the array, it adds the record to the Array.
+          const duplicate = uniqueObj.has(el.id);
+          uniqueObj.add(el.id);
+          return !duplicate;
         }
-      );
+        return false;
+      });
       const formattedTopLvl = ToplevelName.toUpperCase().trim();
-      if(ToplevelName) return result.filter(x => x.childName.toUpperCase() === formattedTopLvl)
-      return;
+      if (ToplevelName)
+        return result.filter(
+          x => x.childName.toUpperCase() === formattedTopLvl,
+        );
     }
-  
-    //Creates a card that recursively loops through all cards using a GraphQL query.
+
+    // Creates a card that recursively loops through all cards using a GraphQL query.
     function LoadCards() {
       return (
         <Query fetchPolicy="network-only" query={GET_USERINFO}>
@@ -196,7 +197,7 @@
             if (error) {
               return `Error! ${error.Message}`;
             }
-            var result = SortJSON(data, parentName);
+            const result = SortJSON(data, parentName);
             return (
               <div className={classes.org_tree}>
                 <CardManager cardData={result} />
@@ -212,12 +213,12 @@
           <ul>
             <li>
               <span>
-              <div>
-                <h4>model.childName</h4>
-                <Icon name="ExpandMore" />
-              </div>
-              <hr />
-              <div className={classes.employee}>
+                <div>
+                  <h4>model.childName</h4>
+                  <Icon name="ExpandMore" />
+                </div>
+                <hr />
+                <div className={classes.employee}>
                   <div className={classes.employee_img}>
                     <img
                       src=""
@@ -225,9 +226,7 @@
                       alt="Betty Logo"
                     />
                   </div>
-                  <p>
-                    user.Fullname
-                    </p>
+                  <p>user.Fullname</p>
                 </div>
                 <div className={classes.employee}>
                   <div className={classes.employee_img}>
@@ -237,9 +236,7 @@
                       alt="Betty Logo"
                     />
                   </div>
-                  <p>
-                    user.Fullname
-                    </p>
+                  <p>user.Fullname</p>
                 </div>
               </span>
             </li>
