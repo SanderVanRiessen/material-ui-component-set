@@ -42,7 +42,7 @@
           <>
             {teammembers.map(user => (
               <>
-                <a href={"https://bro-intranet-dev.betty.app/profile/" + user?.id}>
+                <a href={`/profile/${user?.id}`}>
                   <div className={classes.employee}>
                     <div className={classes.employee_img}>
                       <img
@@ -70,14 +70,16 @@
     const CardManager = (props) => {
     const { cardData } = props;
     const [cards] = React.useState(cardData);
-    return (
-      <ul>
-        {cards[0].childArray.map(card => (        
-          <Card cardData={card} /> 
-        ))
+    if (cardData.length > 0 || cards.length > 0) {
+        return (
+          <ul>
+            {cards[0].childArray.map(card => (
+              <Card cardData={card} />
+            ))}
+          </ul>
+        );
       }
-      </ul>
-    )
+      return <a>hello world</a>;
     }
     B.defineFunction('Set Top Level Value', evt => setParentName(evt.target.innerText));
     const Card = props => {
