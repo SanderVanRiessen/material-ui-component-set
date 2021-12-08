@@ -4,7 +4,7 @@
   allowedTypes: [],
   orientation: 'HORIZONTAL',
   jsx: (() => {
-    const { env, Query, Icon } = B;
+    const { env, Query, Icon, Link } = B;
     const { gql } = window.MaterialUI;
     const [parentName, setParentName] = useState('CEO/VP');
     const isDev = env === 'dev';
@@ -37,12 +37,12 @@
     // Creates the icon, link and name for the Card.
     const TeamList = props => {
       const { teammembers } = props;
-      if (teammembers.length > 0) {
+      if (teammembers && teammembers.length) {
         return (
           <>
             {teammembers.map(user => (
               <>
-                <a href={`/profile/${user ? user.id : null}`}>
+                <Link to={`/profile/${user ? user.id : null}`}>
                   <div className={classes.employee}>
                     <div className={classes.employee_img}>
                       <img
@@ -53,7 +53,7 @@
                     </div>
                     <p>{user ? `${user.firstName} ${user.lastName}` : ' '}</p>
                   </div>
-                </a>
+                </Link>
               </>
             ))}
           </>
@@ -65,7 +65,10 @@
     const CardManager = props => {
       const { cardData } = props;
       const [cards] = useState(cardData);
-      if (cardData.length > 0 || cards.length > 0) {
+      if (!cards) {
+        return null;
+      }
+      if (cards.length) {
         return (
           <ul>
             {cards[0].childArray.map(card => (
