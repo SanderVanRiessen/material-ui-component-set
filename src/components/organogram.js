@@ -6,7 +6,7 @@
   jsx: (() => {
     const { env, Query, Icon } = B;
     const { gql } = window.MaterialUI;
-    const [parentName, setParentName] = React.useState('CEO/VP');
+    const [parentName, setParentName] = useState('CEO/VP');
     const isDev = env === 'dev';
     const GET_USERINFO = gql`
       query Item {
@@ -42,7 +42,7 @@
           <>
             {teammembers.map(user => (
               <>
-                <a href={`/profile/${user?.id}`}>
+                <a href={`/profile/${user ? user.id : null}`}>
                   <div className={classes.employee}>
                     <div className={classes.employee_img}>
                       <img
@@ -59,12 +59,13 @@
           </>
         );
       }
+      return null;
     };
-    
-    const CardManager = (props) => {
-    const { cardData } = props;
-    const [cards] = React.useState(cardData);
-    if (cardData.length > 0 || cards.length > 0) {
+
+    const CardManager = props => {
+      const { cardData } = props;
+      const [cards] = useState(cardData);
+      if (cardData.length > 0 || cards.length > 0) {
         return (
           <ul>
             {cards[0].childArray.map(card => (
@@ -73,25 +74,16 @@
           </ul>
         );
       }
-      return <a>hello world</a>;
+      return null;
     };
     B.defineFunction('Set Top Level Value', evt =>
       setParentName(evt.target.innerText),
     );
     const Card = props => {
       const { cardData } = props;
-      const [childVisibility, setChildVisibility] = React.useState(true);
-      const toggleTeamList = props => {
-        setChildVisibility(childVisibility => !childVisibility);
-      };
-      const visibilityCheck = childVisibility => {
-        {
-          childVisibility ? (
-            <Icon onClick={toggleTeamList} name="ExpandMore" />
-          ) : (
-            <Icon onClick={toggleTeamList} name="ExpandLess" />
-          );
-        }
+      const [childVisibility, setChildVisibility] = useState(true);
+      const toggleTeamList = () => {
+        setChildVisibility(!childVisibility);
       };
       if (cardData) {
         return (
@@ -99,13 +91,12 @@
             <span>
               <div>
                 <h4>{cardData.childName}</h4>
-                {cardData.childArray.length > 0 ? (
-                  childVisibility ? (
+                {cardData.childArray.length > 0 &&
+                  (childVisibility ? (
                     <Icon onClick={toggleTeamList} name="ExpandMore" />
                   ) : (
                     <Icon onClick={toggleTeamList} name="ExpandLess" />
-                  )
-                ) : null}
+                  ))}
               </div>
               <div className={classes.employee_list}>
                 {cardData.childWebusers.length > 0 && (
@@ -159,10 +150,10 @@
           ) {
             const parentObj = teams.find(x => x.childName === child.parentName);
             parentObj.childArray.push(child);
+            if (parentObj) {
+              jsonObj.push(parentObj);
+            }
           }
-        }
-        if (parentObj) {
-          jsonObj.push(parentObj);
         }
       });
 
@@ -382,6 +373,9 @@
       alignItems: 'center',
       fontSize: '12px',
       marginBottom: '2px',
+      '& p': {
+        marginLeft: '5px',
+      },
     },
     employee_img: {
       borderRadius: '100%',
