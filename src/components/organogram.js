@@ -10,7 +10,7 @@
     const isDev = env === 'dev';
     const GET_USERINFO = gql`
       query Item {
-        allTeambridge {
+        allTeambridge(take: 200) {
           results {
             id
             childTeam {
@@ -30,6 +30,7 @@
               hierarchyLevel
             }
           }
+          totalCount
         }
       }
     `;
