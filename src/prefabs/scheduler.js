@@ -85,6 +85,12 @@
           value: true,
         },
         {
+          type: 'TOGGLE',
+          label: 'Space options',
+          key: 'spaceOptions',
+          value: true,
+        },
+        {
           type: 'PROPERTY',
           label: 'Event category',
           key: 'eventCategory',
@@ -94,6 +100,21 @@
             condition: {
               type: 'SHOW',
               option: 'showCategory',
+              comparator: 'EQ',
+              value: true,
+            },
+          },
+        },
+        {
+          type: 'PROPERTY',
+          label: 'Room property',
+          key: 'roomProperty',
+          value: '',
+          configuration: {
+            dependsOn: 'eventModel',
+            condition: {
+              type: 'SHOW',
+              option: 'spaceOptions',
               comparator: 'EQ',
               value: true,
             },
