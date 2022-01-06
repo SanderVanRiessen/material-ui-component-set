@@ -14,7 +14,6 @@
       MonthView,
       WeekView,
       ViewSwitcher,
-      ButtonGroup,
       DateNavigator,
       DragDropProvider,
       TodayButton,
@@ -22,9 +21,7 @@
       AppointmentForm,
       EditRecurrenceMenu,
       ConfirmationDialog,
-      AllDayPanel,
       CurrentTimeIndicator,
-      Resources,
     } = window.MaterialUI.MUIScheduler;
     const { add: addToDate, sub: subFromDate } = window.MaterialUI;
     const {
@@ -36,28 +33,23 @@
       Title,
       People,
     } = window.MaterialUI.Icons;
-    const { getProperty, useText, useAction, useAllQuery, useFilter } = B;
+    const { useText, useAction, useAllQuery } = B;
     const isDev = B.env === 'dev';
     const {
-      filter,
-      filterOnly,
       eventModel,
       actionId,
-      eventCategory,
       showCategory,
       showWebuser,
       showActivity,
       defaultCategory,
-      useEventColor,
       colorZakelijk,
       colorPrive,
+      useEventColor,
       locale,
       defaultTitle,
       startTime,
       endTime,
-      useMinMonth,
       disabledPast,
-      minMonth,
       dynamicLandingDate,
       dynamicWebuserId,
       enableTooltip,
@@ -75,12 +67,10 @@
     };
 
     const colors = {
-      //Default: '#00FFFF',
       Default: '#20659A',
       Zakelijk: colorZakelijk,
       Prive: colorPrive,
     };
-
     const localeTranslation = translationMap[locale];
     const { scheduler: schedulerTranslation } = window.MaterialUI.Translations[
       localeTranslation
@@ -95,23 +85,16 @@
     const intialCurrentDate =
       landingDate instanceof Date && isFinite(landingDate) ? landingDate : now;
 
-    const dateMonths = addToDate(new Date(), {
-      months: minMonth || 0,
-    });
-
     // useMinMonth necesary for 0 values that are auto treated as null in prefab
-    const calculatedMindate = disabledPast
-      ? new Date()
-      : (minMonth !== undefined || minMonth !== null) && useMinMonth
-      ? new Date(dateMonths.getFullYear(), dateMonths.getMonth() + 1, 0)
-      : null;
-    //Calculate current week number
+    // calculatedMindate holds the current date and time when the "Disable past" checkbox is checked
+    const calculatedMindate = disabledPast ? new Date() : null;
+    // Calculate current week number
     const currentNewDate = new Date();
     const oneJan = new Date(currentNewDate.getFullYear(), 0, 1);
     const numberOfDays = Math.floor(
       (currentNewDate - oneJan) / (24 * 60 * 60 * 1000),
     );
-    var currentWeekNumber = Math.ceil(
+    const currentWeekNumber = Math.ceil(
       (currentNewDate.getDay() + 1 + numberOfDays) / 7,
     );
 
@@ -128,24 +111,16 @@
 
     const [refetchState, setRefetchState] = useState(false);
     const [currentView, setViewChange] = useState('week');
+    const [setNameMode, setTitleMode] = useState([]);
     const [currentWeek, setCurrentWeek] = useState({
       week: +currentWeekNumber,
     });
     const [appointment, setAppointment] = useState(null);
     const [formReadOnly, setFormReadOnly] = useState(false);
-    const [height, setHeight] = useState(1250);
+    const [height, setHeight] = useState('auto');
     const wrapperRef = useRef(null);
 
-    const { kind, values = [] } = getProperty(eventCategory) || {};
     const defaultCategoryText = useText(defaultCategory);
-
-    const getCategories = () => {
-      if (kind === 'list' || kind === 'LIST') {
-        return values.map(({ value: v }) => ({ id: v, text: v }));
-      }
-      return [];
-    };
-
     const mounted = useRef(false);
     useEffect(() => {
       mounted.current = true;
@@ -167,7 +142,7 @@
         (err.networkError && err.networkError.message);
       return [errorTitle, errorMessage];
     };
-
+    /*
     const deepMerge = (...objects) => {
       const isObject = item =>
         item && typeof item === 'object' && !Array.isArray(item);
@@ -210,19 +185,18 @@
         { endDate: { lteq: currentDate.endDate.toLocaleDateString() } },
       ],
     };
-
+    
     const where = filterOnly
       ? deepMerge(useFilter(filter), paginationFilter)
       : deepMerge(useFilter(filter), paginationFilterAndRrule);
-    // eslint-disable-next-line no-unused-vars
-    //Retrieve data from selected model
-
-    const { loading, error, data, refetch } =
+    */
+    // Retrieve data from selected model
+    const { loading, data, refetch } =
       eventModel &&
       useAllQuery(
         eventModel,
         {
-          //rawFilter: where,
+          // rawFilter: where,
           take: 200,
           skip: 0,
           variables: {},
@@ -252,7 +226,6 @@
         },
         !eventModel,
       );
-    const categories = getCategories();
 
     const isValidDate = (date, enableTrigger = false) => {
       const condition = new Date(date) > new Date(calculatedMindate);
@@ -271,11 +244,14 @@
 
     B.defineFunction('Show title', () => setTitleMode(true));
     B.defineFunction('Hide title', () => setTitleMode(false));
-    // prettier-ignore
+    function isDate(d) {
+      const date = new Date(d);
+      return date instanceof Date && !isNaN(date);
+    }
     const calculateWeekNumber = date => {
-      const inputDate = new Date(date)
+      const inputDate = new Date(date);
       if (!isDate(inputDate)) {
-        return -1
+        return -1;
       }
       const nowDate = new Date(inputDate.getTime());
       nowDate.setHours(0, 0, 0, 0);
@@ -290,15 +266,10 @@
           ((nowDate.getTime() - week1.getTime()) / 86400000 -
             3 +
             ((week1.getDay() + 6) % 7)) /
-          7,
+            7,
         )
       );
     };
-
-    function isDate(d) {
-      const date = new Date(d);
-      return date instanceof Date && !isNaN(date);
-    }
 
     const handleCurrentViewChange = view => {
       setViewChange(view);
@@ -340,7 +311,6 @@
       handleNewDateInput();
       let currentAppointment = null;
       if (added) {
-        console.log('Added', added);
         const startingAddedId = -1;
         currentAppointment = {
           id: startingAddedId,
@@ -352,7 +322,7 @@
       }
       if (changed) {
         const newData = [];
-        for (let i = 0; i < schedulerData.length; i++) {
+        for (let i = 0; i < schedulerData.length; i += 1) {
           const appointmentObject = schedulerData[i];
           if (
             changed[appointmentObject.id] &&
@@ -361,7 +331,6 @@
               (changed[appointmentObject.id] &&
                 changed[appointmentObject.id].startDate === undefined))
           ) {
-            console.log(appointmentObject, changed);
             currentAppointment = {
               ...appointmentObject,
               ...changed[appointmentObject.id],
@@ -383,7 +352,7 @@
       if (deleted !== undefined) {
         currentAppointment = schedulerData.filter(
           appointmentObj => appointmentObj.id === deleted,
-        )[0];
+        );
         const [isOkToDelete, splittedAppointment] = isValidDelete(
           currentAppointment,
         );
@@ -453,7 +422,6 @@
     // Push retrieved data into array
     useEffect(() => {
       if (!isDev && data && data.results) {
-        const { results } = data;
         if (refetchState) {
           setRefetchState(false);
         }
@@ -473,7 +441,6 @@
             guests: a.guestNamesConcat,
           });
         });
-        console.log('new res', newData);
         setSchedulerData(newData);
       }
     }, [data, refetchState]);
@@ -486,12 +453,35 @@
     const handleAllowDrag = ({ startDate, isBlocked }) =>
       isValidDate(startDate) && !isBlocked;
 
+    const DayTimeLabel = () => (
+      <DayView.TimeScaleLabel
+        style={{
+          lineHeight: 'auto',
+          height: '15px',
+        }}
+      />
+    );
+    const WeekTimeLabel = () => (
+      <WeekView.TimeScaleLabel
+        style={{
+          lineHeight: 'auto',
+          height: '15px',
+        }}
+      />
+    );
+    const DayTickCell = () => (
+      <DayView.TimeScaleTickCell style={{ height: '15px' }} />
+    );
+    const WeekTickCell = () => (
+      <WeekView.TimeScaleTickCell style={{ height: '15px' }} />
+    );
     const DayCellBase = React.memo(
       ({ startDate, onDoubleClick, ...restProps }) => {
         const isValid = isValidDate(startDate);
 
         return (
           <DayView.TimeTableCell
+            style={{ height: '30px' }}
             className={[
               !isValid ? classes.disabledDay : '',
               classes.defaultDay,
@@ -508,6 +498,7 @@
         const isValid = isValidDate(startDate);
         return (
           <WeekView.TimeTableCell
+            style={{ height: '30px' }}
             className={[
               !isValid ? classes.disabledDay : '',
               classes.defaultDay,
@@ -615,8 +606,9 @@
           daysHeading.querySelectorAll('.MuiPickersCalendarHeader-dayLabel');
         if (days && dayItems) {
           dayItems.forEach((element, index) => {
+            const elementData = element;
             if (days[index]) {
-              element.innerText = days[index];
+              elementData.innerText = days[index];
             }
           });
         }
@@ -672,34 +664,33 @@
         dateEditorComponent={DateEditor}
       />
     );
-
     const transformAppointmentTitle = appointmentData => {
-      if (showActivity && appointmentData.subprojectactivity) {
+      const transformAppointmentTitleData = appointmentData;
+      if (showActivity && transformAppointmentTitleData.subprojectactivity) {
         const subprojectActivity =
-          appointmentData.subprojectactivity?.name ?? '';
+          transformAppointmentTitleData.subprojectactivity.name || '';
         const subProjectCode =
-          appointmentData.subprojectactivity?.phase?.subproject?.code ?? '';
+          transformAppointmentTitleData.subprojectactivity.phase.subproject
+            .code || '';
 
-        appointmentData.title = `${subprojectActivity}${
+        transformAppointmentTitleData.title = `${subprojectActivity}${
           subprojectActivity && subProjectCode ? ' - ' : ''
         }${subProjectCode}`;
       }
       if (
         showWebuser &&
-        appointmentData.webUser &&
-        appointmentData.webUser.lastName
+        transformAppointmentTitleData.webUser &&
+        transformAppointmentTitleData.webUser.lastName
       ) {
-        appointmentData.title = `${appointmentData.webUser?.lastName} - ${appointmentData.title}`;
+        transformAppointmentTitleData.title = `${transformAppointmentTitleData.webUser.lastName} - ${transformAppointmentTitleData.title}`;
       }
-      return appointmentData;
+      return transformAppointmentTitleData;
     };
-    //Determines the color of the appointments on the calender
+    // Determines the color of the appointments on the calender
     const getAppointmentColor = appointmentData =>
       useEventColor && appointmentData.color
         ? appointmentData.color
-        : colors[appointmentData.category]
-        ? colors[appointmentData.category]
-        : colors.Default;
+        : colors[appointmentData.category];
 
     const AppointmentContent = ({ data: aData, ...restProps }) => {
       let appointmentData = { ...aData };
@@ -757,13 +748,14 @@
           style={{
             ...style,
             backgroundColor: appointmentColor,
-            opacity: isEditeble ? 1 : 0.7,
+            opacity: isEditeble ? 1 : 0.5,
+            minHeight: 30,
           }}
         />
       );
     };
 
-    //Contents of the tooltips for every appointment
+    // Contents of the tooltips for every appointment
     const TooltipContent = ({ appointmentData, ...restProps }) => (
       <AppointmentTooltip.Content
         {...restProps}
@@ -782,7 +774,7 @@
           </Grid>
         </span>
         <span>
-          {appointmentData.guests != '' ? (
+          {appointmentData.guests !== '' ? (
             <span>
               <Grid
                 container
@@ -830,7 +822,7 @@
           </Grid>
         </span>
         <span>
-          {appointmentData.subTitle != '' ? (
+          {appointmentData.subTitle !== '' ? (
             <span>
               <Grid
                 container
@@ -848,7 +840,7 @@
           ) : null}
         </span>
         <span>
-          {appointmentData.notes != '' ? (
+          {appointmentData.notes !== '' ? (
             <span>
               <hr />
               <Grid
@@ -870,41 +862,39 @@
       </AppointmentTooltip.Content>
     );
     const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
-      appointmentData.startDate = new Date(appointmentData.startDate);
-      appointmentData.endDate = new Date(appointmentData.endDate);
-      const onCategoryFieldChange = nextValue => {
-        onFieldChange({ category: nextValue });
-      };
+      const basicLayoutData = appointmentData;
+      basicLayoutData.startDate = new Date(basicLayoutData.startDate);
+      basicLayoutData.endDate = new Date(basicLayoutData.endDate);
 
-      if (appointmentData.title === undefined) {
+      if (basicLayoutData.title === undefined) {
         onFieldChange({ title: defaultTitle });
       }
-      if (appointmentData.category === undefined) {
+      if (basicLayoutData.category === undefined) {
         onFieldChange({ category: defaultCategoryText });
       }
-      if (appointmentData.startDate >= appointmentData.endDate) {
+      if (basicLayoutData.startDate >= basicLayoutData.endDate) {
         B.triggerEvent(
           'onError',
           'Eind datum moet groter zijn dan start datum. Eind datum is gereset!',
         );
         onFieldChange({
-          startDate: appointmentData.startDate,
-          endDate: addToDate(appointmentData.startDate, {
+          startDate: basicLayoutData.startDate,
+          endDate: addToDate(basicLayoutData.startDate, {
             days: 1,
           }),
         });
       }
 
       const readOnly =
-        (appointmentData.id &&
-          isDate(appointmentData.startDate) &&
-          !isValidDate(appointmentData.startDate)) ||
-        (appointmentData.isBlocked && blockEdit);
+        (basicLayoutData.id &&
+          isDate(basicLayoutData.startDate) &&
+          !isValidDate(basicLayoutData.startDate)) ||
+        (basicLayoutData.isBlocked && blockEdit);
 
       setFormReadOnly(readOnly);
       return (
         <AppointmentForm.BasicLayout
-          appointmentData={appointmentData}
+          appointmentData={basicLayoutData}
           onFieldChange={onFieldChange}
           {...restProps}
           dateEditorComponent={DateEditor}
@@ -955,35 +945,6 @@
         });
       }
     }, [checkResize]);
-    /*
-    const schedulerDataTest = [
-      {
-        startdate: '2021-12-01T09:45:00+01:00',
-        enddate: '2021-12-01T11:00:00+01:00',
-        title: 'Meeting',
-        notes: '12345',
-      },
-      {
-        startdate: '2021-12-01T10:00:00+01:00',
-        enddate: '2021-12-01T13:30:00+01:00',
-        title: 'Go to a gym',
-        notes: '12345',
-      },
-    ];*/
-    //Button view switcher (in progress!)
-    /* const externalViewSwitcher = ({ currentViewName, onChange }) => (
-      <ButtonGroup
-        aria-label="Views"
-        style={{ flexDirection: 'row' }}
-        name="views"
-        value={currentViewName}
-        onChange={onChange}
-      >
-        <FormControlLabel value="Day" control={<Button />} label="Day" />
-        <FormControlLabel value="Week" control={<Button />} label="Week" />
-      </ButtonGroup>
-    ); */
-
     const SchedulerComponent = (
       <div
         ref={wrapperRef}
@@ -1020,6 +981,8 @@
             startDayHour={startTime}
             endDayHour={endTime}
             timeTableCellComponent={DayCellBase}
+            timeScaleLabelComponent={DayTimeLabel}
+            timeScaleTickCellComponent={DayTickCell}
           />
           <WeekView
             name="week"
@@ -1031,6 +994,8 @@
             startDayHour={startTime}
             endDayHour={endTime}
             timeTableCellComponent={WeekTimeTableCell}
+            timeScaleLabelComponent={WeekTimeLabel}
+            timeScaleTickCellComponent={WeekTickCell}
           />
           <MonthView
             name="month"
@@ -1060,23 +1025,24 @@
             messages={schedulerTranslation.appointmentForm}
           />
           <DragDropProvider allowDrag={handleAllowDrag} />
-          <CurrentTimeIndicator shadePreviousCells={true} />
+          <CurrentTimeIndicator shadePreviousCells />
         </Scheduler>
       </div>
     );
     if (isDev) {
-      return <span>{'bonjour'}</span>;
+      return <span>bonjour</span>;
     }
     return SchedulerComponent;
   })(),
   styles: B => t => {
     const style = new B.Styling(t);
-    const { fade } = window.MaterialUI.Core;
-
     return {
+      content: {
+        color: ({ options: { textColor } }) => style.getColor(textColor),
+      },
       wrapper: {
         width: '100%',
-        height: '100%',
+        height: '100px',
         '& > *': {
           pointerEvents: 'none',
         },
@@ -1098,12 +1064,17 @@
         verticalAlign: 'top',
       },
       disabledDay: {
-        backgroundImage: `repeating-linear-gradient(135deg,
-          rgba(244, 67, 54, 0.1),
-          rgba(244, 67, 54, 0.1) 2px,
-          transparent 4px,
-          transparent 9px)`,
-        color: '#9B6467',
+        color: '#D91898',
+      },
+      timeLabel: {
+        height: '100px',
+        lineHeight: '98px',
+        '&:first-child': {
+          height: '50px',
+        },
+        '&:last-child': {
+          height: '50px',
+        },
       },
       week: {
         position: 'absolute',

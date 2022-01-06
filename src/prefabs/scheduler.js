@@ -85,42 +85,6 @@
           value: true,
         },
         {
-          type: 'TOGGLE',
-          label: 'Space options',
-          key: 'spaceOptions',
-          value: true,
-        },
-        {
-          type: 'PROPERTY',
-          label: 'Event category',
-          key: 'eventCategory',
-          value: '',
-          configuration: {
-            dependsOn: 'eventModel',
-            condition: {
-              type: 'SHOW',
-              option: 'showCategory',
-              comparator: 'EQ',
-              value: true,
-            },
-          },
-        },
-        {
-          type: 'PROPERTY',
-          label: 'Room property',
-          key: 'roomProperty',
-          value: '',
-          configuration: {
-            dependsOn: 'eventModel',
-            condition: {
-              type: 'SHOW',
-              option: 'spaceOptions',
-              comparator: 'EQ',
-              value: true,
-            },
-          },
-        },
-        {
           type: 'VARIABLE',
           label: 'Default category',
           key: 'defaultCategory',
@@ -189,37 +153,9 @@
         },
         {
           type: 'TOGGLE',
-          label: 'Use min month',
-          key: 'useMinMonth',
-          value: true,
-        },
-        {
-          type: 'TOGGLE',
           label: 'Disable past',
           key: 'disabledPast',
           value: false,
-          configuration: {
-            condition: {
-              type: 'SHOW',
-              option: 'useMinMonth',
-              comparator: 'EQ',
-              value: true,
-            },
-          },
-        },
-        {
-          type: 'NUMBER',
-          label: 'min month range',
-          key: 'minMonth',
-          value: 0,
-          configuration: {
-            condition: {
-              type: 'SHOW',
-              option: 'useMinMonth',
-              comparator: 'EQ',
-              value: true,
-            },
-          },
         },
         {
           label: 'Language',
