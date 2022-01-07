@@ -13,21 +13,6 @@
           value: '',
         },
         {
-          value: {},
-          label: 'Event Filter',
-          key: 'filter',
-          type: 'FILTER',
-          configuration: {
-            dependsOn: 'eventModel',
-          },
-        },
-        {
-          type: 'TOGGLE',
-          label: 'Ignore rRule filter',
-          key: 'filterOnly',
-          value: false,
-        },
-        {
           value: '',
           label: 'Action',
           key: 'actionId',
@@ -38,20 +23,8 @@
         },
         {
           type: 'TOGGLE',
-          label: 'Block edit if blocked',
-          key: 'blockEdit',
-          value: true,
-        },
-        {
-          type: 'TOGGLE',
           label: 'Show webuser name',
           key: 'showWebuser',
-          value: false,
-        },
-        {
-          type: 'TOGGLE',
-          label: 'Show activity',
-          key: 'showActivity',
           value: false,
         },
         {
@@ -67,33 +40,14 @@
           value: true,
         },
         {
-          type: 'VARIABLE',
-          label: 'Landing date',
-          key: 'dynamicLandingDate',
-          value: [''],
-        },
-        {
-          type: 'VARIABLE',
-          label: 'Webuser ID',
-          key: 'dynamicWebuserId',
-          value: [''],
-        },
-        {
           type: 'TOGGLE',
-          label: 'Show category',
-          key: 'showCategory',
+          label: 'Show custom form',
+          key: 'showCustomForm',
           value: true,
-        },
-        {
-          type: 'VARIABLE',
-          label: 'Default category',
-          key: 'defaultCategory',
-          value: [''],
           configuration: {
-            dependsOn: 'eventModel',
             condition: {
               type: 'SHOW',
-              option: 'showCategory',
+              option: 'enableForm',
               comparator: 'EQ',
               value: true,
             },
@@ -106,9 +60,21 @@
           value: false,
         },
         {
+          type: 'TOGGLE',
+          label: 'Disable past',
+          key: 'disabledPast',
+          value: false,
+        },
+        {
+          type: 'VARIABLE',
+          label: 'Webuser ID',
+          key: 'dynamicWebuserId',
+          value: [''],
+        },
+        {
           type: 'TEXT',
-          label: 'Zakelijk color',
-          key: 'colorZakelijk',
+          label: 'Business color',
+          key: 'colorBusiness',
           value: '#20659A',
           configuration: {
             condition: {
@@ -121,8 +87,8 @@
         },
         {
           type: 'TEXT',
-          label: 'Prive color',
-          key: 'colorPrive',
+          label: 'Private color',
+          key: 'colorPrivate',
           value: '#E69125',
           configuration: {
             condition: {
@@ -137,7 +103,7 @@
           type: 'TEXT',
           label: 'Default event Title',
           key: 'defaultTitle',
-          value: 'Niet beschikbaar',
+          value: 'Not available',
         },
         {
           type: 'NUMBER',
@@ -150,26 +116,6 @@
           label: 'End time',
           key: 'endTime',
           value: 17,
-        },
-        {
-          type: 'TOGGLE',
-          label: 'Disable past',
-          key: 'disabledPast',
-          value: false,
-        },
-        {
-          label: 'Language',
-          key: 'locale',
-          value: 'nl',
-          type: 'CUSTOM',
-          configuration: {
-            as: 'BUTTONGROUP',
-            dataType: 'string',
-            allowedInput: [
-              { name: 'English', value: 'en' },
-              { name: 'Dutch', value: 'nl' },
-            ],
-          },
         },
       ],
       descendants: [],

@@ -38,52 +38,43 @@
     const {
       eventModel,
       actionId,
-      showCategory,
+      showCustomForm,
       showWebuser,
-      showActivity,
-      defaultCategory,
-      colorZakelijk,
-      colorPrive,
+      colorBusiness,
+      colorPrivate,
       useEventColor,
-      locale,
       defaultTitle,
       startTime,
       endTime,
       disabledPast,
-      dynamicLandingDate,
       dynamicWebuserId,
       enableTooltip,
       enableForm,
-      blockEdit,
     } = options;
 
     const translationMap = {
       nl: 'NL',
+      en: 'EN',
     };
 
     const localeMap = {
       nl: 'nl-NL',
       en: 'en-EN',
     };
-
+    const locale = 'nl';
     const colors = {
       Default: '#20659A',
-      Zakelijk: colorZakelijk,
-      Prive: colorPrive,
+      Business: colorBusiness,
+      Private: colorPrivate,
     };
     const localeTranslation = translationMap[locale];
     const { scheduler: schedulerTranslation } = window.MaterialUI.Translations[
       localeTranslation
     ];
     const now = new Date();
-
-    const landingDateText = useText(dynamicLandingDate);
     const dynamicWebuserIdTExt = useText(dynamicWebuserId);
 
-    const landingDate = new Date(`${landingDateText}`);
-
-    const intialCurrentDate =
-      landingDate instanceof Date && isFinite(landingDate) ? landingDate : now;
+    const intialCurrentDate = now;
 
     // useMinMonth necesary for 0 values that are auto treated as null in prefab
     // calculatedMindate holds the current date and time when the "Disable past" checkbox is checked
@@ -116,11 +107,10 @@
       week: +currentWeekNumber,
     });
     const [appointment, setAppointment] = useState(null);
-    const [formReadOnly, setFormReadOnly] = useState(false);
+    const [formReadOnly] = useState(false);
     const [height, setHeight] = useState('auto');
     const wrapperRef = useRef(null);
 
-    const defaultCategoryText = useText(defaultCategory);
     const mounted = useRef(false);
     useEffect(() => {
       mounted.current = true;
@@ -142,61 +132,12 @@
         (err.networkError && err.networkError.message);
       return [errorTitle, errorMessage];
     };
-    /*
-    const deepMerge = (...objects) => {
-      const isObject = item =>
-        item && typeof item === 'object' && !Array.isArray(item);
-
-      return objects.reduce((accumulator, object) => {
-        Object.keys(object).forEach(key => {
-          const accumulatorValue = accumulator[key];
-          const value = object[key];
-
-          if (Array.isArray(accumulatorValue) && Array.isArray(value)) {
-            accumulator[key] = accumulatorValue.concat(value);
-          } else if (isObject(accumulatorValue) && isObject(value)) {
-            accumulator[key] = deepMerge(accumulatorValue, value);
-          } else {
-            accumulator[key] = value;
-          }
-        });
-        return accumulator;
-      }, {});
-    };
-    const paginationFilterAndRrule = {
-      _or: [
-        {
-          _and: [
-            { startDate: { gteq: currentDate.startDate.toLocaleDateString() } },
-            { startDate: { lteq: currentDate.endDate.toLocaleDateString() } },
-            { endDate: { gteq: currentDate.startDate.toLocaleDateString() } },
-            { endDate: { lteq: currentDate.endDate.toLocaleDateString() } },
-          ],
-        },
-        { rRule: { neq: null } },
-      ],
-    };
-
-    const paginationFilter = {
-      _and: [
-        { startDate: { gteq: currentDate.startDate.toLocaleDateString() } },
-        { startDate: { lteq: currentDate.endDate.toLocaleDateString() } },
-        { endDate: { gteq: currentDate.startDate.toLocaleDateString() } },
-        { endDate: { lteq: currentDate.endDate.toLocaleDateString() } },
-      ],
-    };
-    
-    const where = filterOnly
-      ? deepMerge(useFilter(filter), paginationFilter)
-      : deepMerge(useFilter(filter), paginationFilterAndRrule);
-    */
     // Retrieve data from selected model
     const { loading, data, refetch } =
       eventModel &&
       useAllQuery(
         eventModel,
         {
-          // rawFilter: where,
           take: 200,
           skip: 0,
           variables: {},
@@ -640,6 +581,12 @@
       />
     );
 
+    // Determines the color of the appointments on the calender
+    const getAppointmentColor = appointmentData =>
+      useEventColor && appointmentData.color
+        ? appointmentData.color
+        : colors[appointmentData.category];
+
     const Header = ({ appointmentData, ...restProps }) => {
       const readOnly =
         !isValidDate(appointmentData.startDate) || appointmentData.isBlocked;
@@ -666,17 +613,6 @@
     );
     const transformAppointmentTitle = appointmentData => {
       const transformAppointmentTitleData = appointmentData;
-      if (showActivity && transformAppointmentTitleData.subprojectactivity) {
-        const subprojectActivity =
-          transformAppointmentTitleData.subprojectactivity.name || '';
-        const subProjectCode =
-          transformAppointmentTitleData.subprojectactivity.phase.subproject
-            .code || '';
-
-        transformAppointmentTitleData.title = `${subprojectActivity}${
-          subprojectActivity && subProjectCode ? ' - ' : ''
-        }${subProjectCode}`;
-      }
       if (
         showWebuser &&
         transformAppointmentTitleData.webUser &&
@@ -686,11 +622,6 @@
       }
       return transformAppointmentTitleData;
     };
-    // Determines the color of the appointments on the calender
-    const getAppointmentColor = appointmentData =>
-      useEventColor && appointmentData.color
-        ? appointmentData.color
-        : colors[appointmentData.category];
 
     const AppointmentContent = ({ data: aData, ...restProps }) => {
       let appointmentData = { ...aData };
@@ -749,13 +680,13 @@
             ...style,
             backgroundColor: appointmentColor,
             opacity: isEditeble ? 1 : 0.5,
-            minHeight: 30,
+            minHeight: 25,
           }}
         />
       );
     };
 
-    // Contents of the tooltips for every appointment
+    // Contents for the tooltips
     const TooltipContent = ({ appointmentData, ...restProps }) => (
       <AppointmentTooltip.Content
         {...restProps}
@@ -869,13 +800,10 @@
       if (basicLayoutData.title === undefined) {
         onFieldChange({ title: defaultTitle });
       }
-      if (basicLayoutData.category === undefined) {
-        onFieldChange({ category: defaultCategoryText });
-      }
       if (basicLayoutData.startDate >= basicLayoutData.endDate) {
         B.triggerEvent(
           'onError',
-          'Eind datum moet groter zijn dan start datum. Eind datum is gereset!',
+          'End date has to exceed start date. End date has been reset!',
         );
         onFieldChange({
           startDate: basicLayoutData.startDate,
@@ -885,22 +813,14 @@
         });
       }
 
-      const readOnly =
-        (basicLayoutData.id &&
-          isDate(basicLayoutData.startDate) &&
-          !isValidDate(basicLayoutData.startDate)) ||
-        (basicLayoutData.isBlocked && blockEdit);
-
-      setFormReadOnly(readOnly);
       return (
         <AppointmentForm.BasicLayout
           appointmentData={basicLayoutData}
           onFieldChange={onFieldChange}
           {...restProps}
           dateEditorComponent={DateEditor}
-          readOnly={readOnly}
         >
-          {showCategory && (
+          {showCustomForm && (
             <>
               <AppointmentForm.Label text="Room" type="title" />
             </>
@@ -1029,8 +949,42 @@
         </Scheduler>
       </div>
     );
+    const SchedulerComponentIsDev = (
+      <div
+        ref={wrapperRef}
+        className={[isDev && classes.wrapper, classes.resize].join(' ')}
+      >
+        <Scheduler
+          height={height}
+          firstDayOfWeek={1}
+          locale={localeMap[locale]}
+        >
+          <ViewState
+            currentDate={currentDate.date}
+            onCurrentDateChange={hanleCurrentDateChange}
+            currentViewName={currentView}
+            onCurrentViewNameChange={handleCurrentViewChange}
+          />
+          <Toolbar flexibleSpaceComponent={FlexibleSpace} />
+          <DateNavigator />
+          <WeekView
+            name="week"
+            displayName={
+              schedulerTranslation.weekView.name
+                ? schedulerTranslation.weekView.displayName
+                : 'Week'
+            }
+            startDayHour={startTime}
+            endDayHour={endTime}
+            timeTableCellComponent={WeekTimeTableCell}
+            timeScaleLabelComponent={WeekTimeLabel}
+            timeScaleTickCellComponent={WeekTickCell}
+          />
+        </Scheduler>
+      </div>
+    );
     if (isDev) {
-      return <span>bonjour</span>;
+      return SchedulerComponentIsDev;
     }
     return SchedulerComponent;
   })(),
