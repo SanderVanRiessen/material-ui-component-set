@@ -679,7 +679,7 @@
           style={{
             ...style,
             backgroundColor: appointmentColor,
-            opacity: isEditeble ? 1 : 0.5,
+            filter: isEditeble ? 'brightness(100%)' : 'brightness(60%)',
             minHeight: 25,
           }}
         />
@@ -695,11 +695,13 @@
         alignItems="center"
       >
         <span>
+          <hr />
           <Grid container alignItems="center" className={classes.containerTool}>
             <Grid item xs={2} className={classes.iconTool}>
               <Person className={classes.icon} />
             </Grid>
             <Grid item xs={10}>
+              <span style={{ fontWeight: 'bold' }}>Host:</span> <br />
               <span>{appointmentData.webUser.fullName}</span>
             </Grid>
           </Grid>
@@ -716,6 +718,7 @@
                   <People className={classes.icon} />
                 </Grid>
                 <Grid item xs={10}>
+                  <span style={{ fontWeight: 'bold' }}>Guest(s):</span> <br />
                   <span>{appointmentData.guests}</span> <br />
                 </Grid>
               </Grid>
@@ -728,6 +731,7 @@
               <AirplanemodeActive className={classes.icon} />
             </Grid>
             <Grid item xs={10}>
+              <span style={{ fontWeight: 'bold' }}>External meeting:</span>{' '}
               <span>
                 {appointmentData.externalMeeting === true ? (
                   <Check
@@ -735,7 +739,7 @@
                       color: 'green',
                       width: '20px',
                       height: '20px',
-                      marginTop: '2px',
+                      verticalAlign: 'bottom',
                     }}
                   />
                 ) : (
@@ -744,7 +748,7 @@
                       color: 'red',
                       width: '20px',
                       height: '20px',
-                      marginTop: '2px',
+                      verticalAlign: 'bottom',
                     }}
                   />
                 )}
@@ -764,6 +768,7 @@
                   <Title className={classes.icon} />
                 </Grid>
                 <Grid item xs={10}>
+                  <span style={{ fontWeight: 'bold' }}>Sub-title:</span> <br />
                   <span>{appointmentData.subTitle}</span>
                 </Grid>
               </Grid>
@@ -773,7 +778,6 @@
         <span>
           {appointmentData.notes !== '' ? (
             <span>
-              <hr />
               <Grid
                 container
                 wrap="nowrap"
@@ -784,6 +788,7 @@
                   <Note className={classes.icon} />
                 </Grid>
                 <Grid item xs={10}>
+                  <span style={{ fontWeight: 'bold' }}>Notes:</span> <br />
                   <span>{appointmentData.notes}</span>
                 </Grid>
               </Grid>
