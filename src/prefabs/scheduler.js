@@ -13,6 +13,21 @@
           value: '',
         },
         {
+          type: 'CUSTOM',
+          label: 'Custom Scheduler Type',
+          key: 'customSchedulerType',
+          value: 'none',
+          configuration: {
+            as: 'BUTTONGROUP',
+            dataType: 'string',
+            allowedInput: [
+              { name: 'None', value: 'none' },
+              { name: 'Rooms', value: 'room' },
+              { name: 'Cars', value: 'car' },
+            ],
+          },
+        },
+        {
           value: '',
           label: 'Action',
           key: 'actionId',

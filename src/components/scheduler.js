@@ -4,14 +4,13 @@
   allowedTypes: [],
   orientation: 'VERTICAL',
   jsx: (() => {
-    const { Box, TableCell, Grid } = window.MaterialUI.Core;
+    const { Box, Grid } = window.MaterialUI.Core;
     const { EditingState, ViewState } = window.MaterialUI.Scheduler;
     const {
       Scheduler,
       DayView,
       Appointments,
       Toolbar,
-      MonthView,
       WeekView,
       ViewSwitcher,
       DateNavigator,
@@ -86,7 +85,7 @@
       (currentNewDate - oneJan) / (24 * 60 * 60 * 1000),
     );
     const currentWeekNumber = Math.ceil(
-      (currentNewDate.getDay() + 1 + numberOfDays) / 7,
+      (currentNewDate.getDay() + 1 + numberOfDays) / 7 - 1,
     );
 
     const createDate = date => ({
@@ -94,12 +93,11 @@
       startDate: subFromDate(date, { months: 1 }),
       endDate: addToDate(date, { months: 1 }),
     });
-
+    //
     const [schedulerData, setSchedulerData] = useState([]);
     const [currentDate, setDateChange] = useState(
       createDate(intialCurrentDate),
     );
-
     const [refetchState, setRefetchState] = useState(false);
     const [currentView, setViewChange] = useState('week');
     const [setNameMode, setTitleMode] = useState([]);
@@ -167,7 +165,6 @@
         },
         !eventModel,
       );
-
     const isValidDate = (date, enableTrigger = false) => {
       const condition = new Date(date) > new Date(calculatedMindate);
       if (!condition && enableTrigger) {
@@ -211,7 +208,6 @@
         )
       );
     };
-
     const handleCurrentViewChange = view => {
       setViewChange(view);
       setCurrentWeek({ week: calculateWeekNumber(currentDate.date) });
@@ -393,36 +389,12 @@
 
     const handleAllowDrag = ({ startDate, isBlocked }) =>
       isValidDate(startDate) && !isBlocked;
-
-    const DayTimeLabel = () => (
-      <DayView.TimeScaleLabel
-        style={{
-          lineHeight: 'auto',
-          height: '15px',
-        }}
-      />
-    );
-    const WeekTimeLabel = () => (
-      <WeekView.TimeScaleLabel
-        style={{
-          lineHeight: 'auto',
-          height: '15px',
-        }}
-      />
-    );
-    const DayTickCell = () => (
-      <DayView.TimeScaleTickCell style={{ height: '15px' }} />
-    );
-    const WeekTickCell = () => (
-      <WeekView.TimeScaleTickCell style={{ height: '15px' }} />
-    );
     const DayCellBase = React.memo(
       ({ startDate, onDoubleClick, ...restProps }) => {
         const isValid = isValidDate(startDate);
 
         return (
           <DayView.TimeTableCell
-            style={{ height: '30px' }}
             className={[
               !isValid ? classes.disabledDay : '',
               classes.defaultDay,
@@ -439,7 +411,6 @@
         const isValid = isValidDate(startDate);
         return (
           <WeekView.TimeTableCell
-            style={{ height: '30px' }}
             className={[
               !isValid ? classes.disabledDay : '',
               classes.defaultDay,
@@ -451,66 +422,14 @@
         );
       },
     );
-    const MonthTimeTableCell = React.memo(
-      ({
-        startDate,
-        onDoubleClick,
-        formatDate,
-        isShaded,
-        otherMonth,
-        endOfGroup,
-        hasRightBorder,
-        groupOrientation,
-        today,
-        ...restProps
-      }) => {
-        const isValid = isValidDate(startDate);
-        const isFirstMonthDay = startDate.getDate() === 1;
-        const formatOptions =
-          isFirstMonthDay && !today
-            ? { day: 'numeric', month: 'short' }
-            : { day: 'numeric' };
-        const weekNumber =
-          new Date(startDate).getDay() === 1
-            ? `W ${calculateWeekNumber(startDate)}`
-            : null;
-        return (
-          <TableCell
-            tabIndex={0}
-            className={[
-              classes.cell,
-              !isValid && classes.disabledDay,
-              isShaded && classes.shadedCell,
-              (endOfGroup || hasRightBorder) &&
-                groupOrientation === 'Horizontal' &&
-                classes.brightRightBorder,
-              endOfGroup &&
-                groupOrientation === 'Vertical' &&
-                classes.brightBorderBottom,
-            ].join(' ')}
-            style={{ height: `${(height - 93) / 6}px` }}
-            {...(isValid ? { onDoubleClick } : { onDoubleClick: () => {} })}
-            {...restProps}
-          >
-            <div className={classes.week}>{weekNumber}</div>
-            <div
-              className={[
-                today ? classes.today : classes.text,
-                otherMonth && !today && classes.otherMonth,
-              ].join(' ')}
-            >
-              {formatDate(startDate, formatOptions)}
-            </div>
-          </TableCell>
-        );
-      },
-    );
-
     const FlexibleSpace = ({ ...restProps }) => (
-      <Toolbar.FlexibleSpace {...restProps} style={{ justifyContent: 'start' }}>
+      <Toolbar.FlexibleSpace
+        {...restProps}
+        style={{ justifyContent: 'start', margin: 'auto' }}
+      >
         <Box>
           <p className={classes.weekNumber}>
-            {currentView === 'week' ? `Week: ${currentWeek.week}` : ''}
+            <b>{currentView === 'week' ? `W${currentWeek.week}` : ''}</b>
           </p>
         </Box>
       </Toolbar.FlexibleSpace>
@@ -586,7 +505,7 @@
       useEventColor && appointmentData.color
         ? appointmentData.color
         : colors[appointmentData.category];
-
+    // Content of the tooltip header
     const Header = ({ appointmentData, ...restProps }) => {
       const readOnly =
         !isValidDate(appointmentData.startDate) || appointmentData.isBlocked;
@@ -797,22 +716,26 @@
         </span>
       </AppointmentTooltip.Content>
     );
-    const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
-      const basicLayoutData = appointmentData;
-      basicLayoutData.startDate = new Date(basicLayoutData.startDate);
-      basicLayoutData.endDate = new Date(basicLayoutData.endDate);
 
-      if (basicLayoutData.title === undefined) {
+    const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
+      const sData = appointmentData;
+      sData.startDate = new Date(appointmentData.startDate);
+      sData.endDate = new Date(appointmentData.endDate);
+      const onCategoryFieldChange = nextValue => {
+        onFieldChange({ roomList: nextValue });
+      };
+
+      if (appointmentData.title === undefined) {
         onFieldChange({ title: defaultTitle });
       }
-      if (basicLayoutData.startDate >= basicLayoutData.endDate) {
+      if (appointmentData.startDate >= appointmentData.endDate) {
         B.triggerEvent(
           'onError',
-          'End date has to exceed start date. End date has been reset!',
+          'End date must be greater than the start date. End date has been reset',
         );
         onFieldChange({
-          startDate: basicLayoutData.startDate,
-          endDate: addToDate(basicLayoutData.startDate, {
+          startDate: appointmentData.startDate,
+          endDate: addToDate(appointmentData.startDate, {
             days: 1,
           }),
         });
@@ -820,7 +743,7 @@
 
       return (
         <AppointmentForm.BasicLayout
-          appointmentData={basicLayoutData}
+          appointmentData={appointmentData}
           onFieldChange={onFieldChange}
           {...restProps}
           dateEditorComponent={DateEditor}
@@ -828,6 +751,10 @@
           {showCustomForm && (
             <>
               <AppointmentForm.Label text="Room" type="title" />
+              <AppointmentForm.Select
+                type="outlinedSelect"
+                onValueChange={onCategoryFieldChange}
+              />
             </>
           )}
         </AppointmentForm.BasicLayout>
@@ -887,7 +814,7 @@
             currentViewName={currentView}
             onCurrentViewNameChange={handleCurrentViewChange}
           />
-          <Toolbar flexibleSpaceComponent={FlexibleSpace} />
+          <Toolbar />
           <ViewSwitcher />
           <DateNavigator />
           <TodayButton messages={schedulerTranslation.todayButton} />
@@ -906,8 +833,6 @@
             startDayHour={startTime}
             endDayHour={endTime}
             timeTableCellComponent={DayCellBase}
-            timeScaleLabelComponent={DayTimeLabel}
-            timeScaleTickCellComponent={DayTickCell}
           />
           <WeekView
             name="week"
@@ -919,17 +844,8 @@
             startDayHour={startTime}
             endDayHour={endTime}
             timeTableCellComponent={WeekTimeTableCell}
-            timeScaleLabelComponent={WeekTimeLabel}
-            timeScaleTickCellComponent={WeekTickCell}
-          />
-          <MonthView
-            name="month"
-            displayName={
-              schedulerTranslation.monthView.displayName
-                ? schedulerTranslation.monthView.displayName
-                : 'Month'
-            }
-            timeTableCellComponent={MonthTimeTableCell}
+            dayScaleEmptyCellComponent={FlexibleSpace}
+            excludedDays={[0, 6]}
           />
           <ConfirmationDialog
             messages={schedulerTranslation.confirmationDialog}
@@ -972,6 +888,12 @@
           />
           <Toolbar flexibleSpaceComponent={FlexibleSpace} />
           <DateNavigator />
+          <ViewSwitcher />
+          <EditingState onCommitChanges={handleCommitChanges} />
+          <EditRecurrenceMenu
+            messages={schedulerTranslation.editRecurrenceMenu}
+            layoutComponent={Recurrent}
+          />
           <WeekView
             name="week"
             displayName={
@@ -982,8 +904,6 @@
             startDayHour={startTime}
             endDayHour={endTime}
             timeTableCellComponent={WeekTimeTableCell}
-            timeScaleLabelComponent={WeekTimeLabel}
-            timeScaleTickCellComponent={WeekTickCell}
           />
         </Scheduler>
       </div>
