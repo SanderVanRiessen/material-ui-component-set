@@ -1,5 +1,5 @@
 (() => ({
-  name: 'Alert',
+  name: 'alert',
   type: 'CONTENT_COMPONENT',
   allowedTypes: [],
   orientation: 'HORIZONTAL',
