@@ -7,6 +7,7 @@ import enLocale from 'date-fns/locale/en-US';
 import nlLocale from 'date-fns/locale/nl';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
 
 import Icons from './icons';
 
@@ -20,4 +21,5 @@ export default {
   DateLocales: { enLocale, nlLocale },
   FullCalendar,
   dayGridPlugin,
+  interactionPlugin,
 };

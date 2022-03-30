@@ -4,11 +4,21 @@
   allowedTypes: [],
   orientation: 'HORIZONTAL',
   jsx: (() => {
-    const { FullCalendar, dayGridPlugin } = window.MaterialUI;
+    const { FullCalendar, dayGridPlugin, interactionPlugin } =
+      window.MaterialUI;
+
+    const handleDateClick = (arg) => {
+      // bind with an arrow function
+      alert(arg.dateStr);
+    };
 
     return (
       <>
-        <FullCalendar plugins={[dayGridPlugin]} initialView="dayGridMonth" />
+        <FullCalendar
+          plugins={[dayGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          dateClick={handleDateClick}
+        />
       </>
     );
   })(),
