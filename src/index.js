@@ -5,6 +5,8 @@ import * as Styles from '@material-ui/styles';
 import DateFnsUtils from '@date-io/date-fns';
 import enLocale from 'date-fns/locale/en-US';
 import nlLocale from 'date-fns/locale/nl';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
 
 import Icons from './icons';
 
@@ -16,4 +18,6 @@ export default {
   Styles,
   DateFnsUtils,
   DateLocales: { enLocale, nlLocale },
+  FullCalendar,
+  dayGridPlugin,
 };
