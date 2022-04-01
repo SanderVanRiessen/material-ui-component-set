@@ -13,13 +13,15 @@
     };
 
     return (
-      <>
-        <FullCalendar
-          plugins={[dayGridPlugin, interactionPlugin]}
-          initialView="dayGridMonth"
-          dateClick={handleDateClick}
-        />
-      </>
+      <div className={classes.root}>
+        <>
+          <FullCalendar
+            plugins={[dayGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            dateClick={handleDateClick}
+          />
+        </>
+      </div>
     );
   })(),
   styles: () => () => {
