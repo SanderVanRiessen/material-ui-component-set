@@ -7,11 +7,13 @@
     const { FullCalendar, dayGridPlugin, interactionPlugin, timeGridPlugin } =
       window.MaterialUI;
 
+    const { visible } = options;
+
     const handleDateClick = () => {
       // bind with an arrow function
     };
 
-    return (
+    return visible ? (
       <div className={classes.root}>
         <>
           <FullCalendar
@@ -22,6 +24,8 @@
           />
         </>
       </div>
+    ) : (
+      <></>
     );
   })(),
   styles: () => () => {
