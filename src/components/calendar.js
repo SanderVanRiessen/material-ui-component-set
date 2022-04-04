@@ -4,21 +4,21 @@
   allowedTypes: [],
   orientation: 'HORIZONTAL',
   jsx: (() => {
-    const { FullCalendar, dayGridPlugin, interactionPlugin } =
+    const { FullCalendar, dayGridPlugin, interactionPlugin, timeGridPlugin } =
       window.MaterialUI;
 
-    const handleDateClick = (arg) => {
+    const handleDateClick = () => {
       // bind with an arrow function
-      alert(arg.dateStr);
     };
 
     return (
       <div className={classes.root}>
         <>
           <FullCalendar
-            plugins={[dayGridPlugin, interactionPlugin]}
-            initialView="dayGridMonth"
+            plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
+            initialView="timeGridWeek"
             dateClick={handleDateClick}
+            selectable
           />
         </>
       </div>

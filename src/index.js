@@ -8,6 +8,7 @@ import nlLocale from 'date-fns/locale/nl';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import timeGridPlugin from '@fullcalendar/timegrid';
 
 import Icons from './icons';
 
@@ -22,4 +23,5 @@ export default {
   FullCalendar,
   dayGridPlugin,
   interactionPlugin,
+  timeGridPlugin,
 };
