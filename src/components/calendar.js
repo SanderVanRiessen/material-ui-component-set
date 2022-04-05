@@ -7,25 +7,30 @@
     const { FullCalendar, dayGridPlugin, interactionPlugin, timeGridPlugin } =
       window.MaterialUI;
 
-    const { visible } = options;
-
     const handleDateClick = () => {
       // bind with an arrow function
     };
 
-    return visible ? (
+    const headerToolbar = {
+      left: 'timeGridWeek,timeGridDay',
+      center: 'title',
+      right: 'prev,today,next',
+    };
+
+    return (
       <div className={classes.root}>
         <>
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
             initialView="timeGridWeek"
+            weekends={false}
+            nowIndicator
+            headerToolbar={headerToolbar}
             dateClick={handleDateClick}
             selectable
           />
         </>
       </div>
-    ) : (
-      <></>
     );
   })(),
   styles: () => () => {
