@@ -33,6 +33,9 @@
               plugins={[dayGridPlugin, timeGridPlugin]}
               initialView="timeGridWeek"
               headerToolbar={PageBuilderHeaderToolbar}
+              weekends={false}
+              slotMinTime="07:00:00"
+              slotMaxTime="21:00:00"
             />
           </>
         </div>
