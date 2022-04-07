@@ -27,6 +27,7 @@
       minute: '2-digit',
       omitZeroMinute: false,
       meridiem: false,
+      hour12: false,
     };
 
     if (isDev) {
@@ -57,6 +58,8 @@
             slotMinTime="07:00:00"
             slotMaxTime="21:00:00"
             slotLabelFormat={slotLabelFormat}
+            // slotDuration="00:15:00"
+            // slotLabelInterval="00:60:00"
             weekends={false}
             nowIndicator
             headerToolbar={headerToolbar}
