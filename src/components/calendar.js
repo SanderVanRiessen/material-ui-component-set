@@ -8,9 +8,7 @@
       window.MaterialUI;
     const { env } = B;
 
-    const handleDateClick = () => {
-      // bind with an arrow function
-    };
+    const handleDateClick = () => {};
 
     const isDev = env === 'dev';
 
@@ -24,6 +22,12 @@
       center: 'title',
       right: '',
     };
+    const slotLabelFormat = {
+      hour: 'numeric',
+      minute: '2-digit',
+      omitZeroMinute: false,
+      meridiem: false,
+    };
 
     if (isDev) {
       return (
@@ -34,8 +38,10 @@
               initialView="timeGridWeek"
               headerToolbar={PageBuilderHeaderToolbar}
               weekends={false}
+              allDaySlot={false}
               slotMinTime="07:00:00"
               slotMaxTime="21:00:00"
+              slotLabelFormat={slotLabelFormat}
             />
           </>
         </div>
@@ -47,11 +53,15 @@
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
             initialView="timeGridWeek"
+            allDaySlot={false}
+            slotMinTime="07:00:00"
+            slotMaxTime="21:00:00"
+            slotLabelFormat={slotLabelFormat}
             weekends={false}
             nowIndicator
             headerToolbar={headerToolbar}
-            dateClick={handleDateClick}
             selectable
+            select={handleDateClick}
           />
         </>
       </div>
