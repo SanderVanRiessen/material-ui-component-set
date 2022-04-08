@@ -4,8 +4,6 @@
   allowedTypes: [],
   orientation: 'HORIZONTAL',
   jsx: (() => {
-    // eslint-disable-next-line no-debugger
-    debugger;
     const { env } = B;
     const isDev = env === 'dev';
     const { useAllQuery } = B;
