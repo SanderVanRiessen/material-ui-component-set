@@ -4,13 +4,52 @@
   allowedTypes: [],
   orientation: 'HORIZONTAL',
   jsx: (() => {
+    // eslint-disable-next-line no-debugger
+    debugger;
+    const { env } = B;
+    const isDev = env === 'dev';
+    const { useAllQuery } = B;
+    const { model } = options;
+    // const where = useFilter(filter);
+    const [results, setResults] = useState([]);
+    const { loading, error, data } =
+      model &&
+      useAllQuery(model, {
+        onCompleted(res) {
+          const hasResult = res && res.result && res.result.length > 0;
+          if (hasResult) {
+            B.triggerEvent('onSuccess', res.results);
+          } else {
+            B.triggerEvent('onNoResults');
+          }
+        },
+        onError(resp) {
+          // if (!displayError) {
+          B.triggerEvent('onError', resp);
+          // }
+        },
+      });
+    useEffect(() => {
+      if (!isDev && data) {
+        setResults(data.results);
+      }
+    }, [data]);
+    if (loading) {
+      return <div>Loading...</div>;
+    }
+    if (error) {
+      return (
+        <div>
+          Something went wrong.
+          <br />
+          {error.message}
+        </div>
+      );
+    }
     const { FullCalendar, dayGridPlugin, interactionPlugin, timeGridPlugin } =
       window.MaterialUI;
-    const { env } = B;
 
     const handleDateClick = () => {};
-
-    const isDev = env === 'dev';
 
     const headerToolbar = {
       left: 'timeGridWeek,timeGridDay',
@@ -29,7 +68,7 @@
       meridiem: false,
       hour12: false,
     };
-
+    console.log(results);
     if (isDev) {
       return (
         <div className={classes.root}>

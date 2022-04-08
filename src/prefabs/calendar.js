@@ -7,7 +7,14 @@
   structure: [
     {
       name: 'calendar',
-      options: [],
+      options: [
+        {
+          value: '',
+          label: 'Model',
+          key: 'model',
+          type: 'MODEL_AND_RELATION',
+        },
+      ],
       descendants: [
         {
           name: 'Dialog',
