@@ -4,12 +4,14 @@
   allowedTypes: [],
   orientation: 'HORIZONTAL',
   jsx: (() => {
-    const { env } = B;
+    const { env, useAllQuery, getProperty } = B;
     const isDev = env === 'dev';
-    const { useAllQuery } = B;
-    const { model } = options;
-    // const where = useFilter(filter);
+    const { model, titleProperty, startProperty, endProperty } = options;
+    const { name: calendarTitle } = getProperty(titleProperty) || {};
+    const { name: calendarStart } = getProperty(startProperty) || {};
+    const { name: calendarEnd } = getProperty(endProperty) || {};
     const [results, setResults] = useState([]);
+
     const { loading, error, data } =
       model &&
       useAllQuery(model, {
@@ -27,11 +29,23 @@
           // }
         },
       });
+
     useEffect(() => {
       if (!isDev && data) {
-        setResults(data.results);
+        const newArray = [];
+        // eslint-disable-next-line no-restricted-syntax
+        for (const dataObject of data.results) {
+          const Newobject = {
+            title: dataObject[calendarTitle],
+            start: dataObject[calendarStart],
+            end: dataObject[calendarEnd],
+          };
+          newArray.push(Newobject);
+        }
+        setResults(newArray);
       }
     }, [data]);
+
     if (loading) {
       return <div>Loading...</div>;
     }
@@ -66,26 +80,39 @@
       meridiem: false,
       hour12: false,
     };
-    console.log(results);
-    if (isDev) {
-      return (
-        <div className={classes.root}>
-          <>
-            <FullCalendar
-              plugins={[dayGridPlugin, timeGridPlugin]}
-              initialView="timeGridWeek"
-              headerToolbar={PageBuilderHeaderToolbar}
-              weekends={false}
-              allDaySlot={false}
-              slotMinTime="07:00:00"
-              slotMaxTime="21:00:00"
-              slotLabelFormat={slotLabelFormat}
-            />
-          </>
-        </div>
-      );
+
+    const newDate = new Date();
+    let date = newDate.getDate('DD');
+    if (date < 10) {
+      date = `0${date}`;
     }
-    return (
+    let month = (newDate.getMonth('MM') + 1).toString();
+    if (month < 10) {
+      month = `0${month}`;
+    }
+    const year = newDate.getFullYear().toString();
+    const today = `${year}-${month}-${date}`;
+
+    let selectAllow = {};
+    if (selectAllow === today) {
+      selectAllow = true;
+    }
+    return isDev ? (
+      <div className={classes.root}>
+        <>
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin]}
+            initialView="timeGridWeek"
+            headerToolbar={PageBuilderHeaderToolbar}
+            weekends={false}
+            allDaySlot={false}
+            slotMinTime="07:00:00"
+            slotMaxTime="21:00:00"
+            slotLabelFormat={slotLabelFormat}
+          />
+        </>
+      </div>
+    ) : (
       <div className={classes.root}>
         <>
           <FullCalendar
@@ -100,8 +127,11 @@
             weekends={false}
             nowIndicator
             headerToolbar={headerToolbar}
+            // validRange={validRange}
             selectable
             select={handleDateClick}
+            events={results}
+            selectAllow={selectAllow}
           />
         </>
       </div>

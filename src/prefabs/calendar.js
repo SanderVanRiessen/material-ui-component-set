@@ -14,6 +14,33 @@
           key: 'model',
           type: 'MODEL_AND_RELATION',
         },
+        {
+          value: '',
+          label: 'Calendar Title',
+          key: 'titleProperty',
+          type: 'PROPERTY',
+          configuration: {
+            dependsOn: 'model',
+          },
+        },
+        {
+          value: '',
+          label: 'Calendar Start Time',
+          key: 'startProperty',
+          type: 'PROPERTY',
+          configuration: {
+            dependsOn: 'model',
+          },
+        },
+        {
+          value: '',
+          label: 'Calendar End Time',
+          key: 'endProperty',
+          type: 'PROPERTY',
+          configuration: {
+            dependsOn: 'model',
+          },
+        },
       ],
       descendants: [
         {
