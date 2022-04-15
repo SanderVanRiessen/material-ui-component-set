@@ -159,6 +159,11 @@
   styles: () => () => {
     return {
       root: {
+        '& element': {
+          '& .style': {
+            cursor: 'pointer',
+          },
+        },
         '& td': {
           '& .fc-day-past': {
             backgroundColor: '#f2f2f2',
@@ -166,6 +171,9 @@
         },
         '& .fc-event-past': {
           filter: 'brightness(50%)',
+        },
+        '& h2': {
+          fontFamily: 'Merriweather, serif',
         },
       },
     };
