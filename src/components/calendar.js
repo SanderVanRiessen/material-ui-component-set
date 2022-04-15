@@ -6,8 +6,8 @@
   jsx: (() => {
     const { env, useAllQuery, getProperty } = B;
     const isDev = env === 'dev';
-    const { model, titleProperty, startProperty, endProperty } = options;
-    const { name: calendarTitle } = getProperty(titleProperty) || {};
+    const { model, roomProperty, startProperty, endProperty } = options;
+    const { name: calendarRoom } = getProperty(roomProperty) || {};
     const { name: calendarStart } = getProperty(startProperty) || {};
     const { name: calendarEnd } = getProperty(endProperty) || {};
     const [results, setResults] = useState([]);
@@ -36,7 +36,7 @@
         // eslint-disable-next-line no-restricted-syntax
         for (const dataObject of data.results) {
           const Newobject = {
-            title: dataObject[calendarTitle],
+            title: dataObject[calendarRoom],
             start: dataObject[calendarStart],
             end: dataObject[calendarEnd],
           };
@@ -80,6 +80,10 @@
       meridiem: false,
       hour12: false,
     };
+    const today = new Date().toISOString().slice(0, 10);
+    const validRange = {
+      start: today,
+    };
 
     const newDate = new Date();
     let date = newDate.getDate('DD');
@@ -90,19 +94,25 @@
     if (month < 10) {
       month = `0${month}`;
     }
-    const year = newDate.getFullYear().toString();
-    const today = `${year}-${month}-${date}`;
+    // const year = newDate.getFullYear().toString();
+    // const today = `${year}-${month}-${date}`;
 
-    let selectAllow = {};
-    if (selectAllow === today) {
-      selectAllow = true;
-    }
+    // let selectAllow = {};
+    // if (selectAllow < today) {
+    //   selectAllow = false;
+    // }
+
+    const eventClick = (info) => {
+      alert('Event :', info.event.title);
+    };
+    console.log(results);
     return isDev ? (
       <div className={classes.root}>
         <>
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin]}
             initialView="timeGridWeek"
+            contentHeight="auto"
             headerToolbar={PageBuilderHeaderToolbar}
             weekends={false}
             allDaySlot={false}
@@ -118,6 +128,7 @@
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
             initialView="timeGridWeek"
+            contentHeight="auto"
             allDaySlot={false}
             slotMinTime="07:00:00"
             slotMaxTime="21:00:00"
@@ -127,11 +138,12 @@
             weekends={false}
             nowIndicator
             headerToolbar={headerToolbar}
-            // validRange={validRange}
+            validRange={validRange}
             selectable
             select={handleDateClick}
             events={results}
-            selectAllow={selectAllow}
+            // selectAllow={selectAllow}
+            eventClick={eventClick}
           />
         </>
       </div>

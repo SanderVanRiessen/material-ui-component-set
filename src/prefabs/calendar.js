@@ -16,8 +16,8 @@
         },
         {
           value: '',
-          label: 'Calendar Title',
-          key: 'titleProperty',
+          label: 'Calendar Room',
+          key: 'roomProperty',
           type: 'PROPERTY',
           configuration: {
             dependsOn: 'model',
