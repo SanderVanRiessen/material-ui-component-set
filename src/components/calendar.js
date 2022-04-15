@@ -15,6 +15,7 @@
     const { loading, error, data } =
       model &&
       useAllQuery(model, {
+        take: 200,
         onCompleted(res) {
           const hasResult = res && res.result && res.result.length > 0;
           if (hasResult) {
@@ -81,9 +82,9 @@
       hour12: false,
     };
     const today = new Date().toISOString().slice(0, 10);
-    const validRange = {
-      start: today,
-    };
+    // const validRange = {
+    //   start: today,
+    // };
 
     const newDate = new Date();
     let date = newDate.getDate('DD');
@@ -96,16 +97,21 @@
     }
     // const year = newDate.getFullYear().toString();
     // const today = `${year}-${month}-${date}`;
-
-    // let selectAllow = {};
-    // if (selectAllow < today) {
-    //   selectAllow = false;
-    // }
+    // const selectAllow = (selectInfo) => {
+    //   const moment = today;
+    //   return moment().diff(selectInfo.start) <= 0;
+    // };
 
     const eventClick = (info) => {
       alert('Event :', info.event.title);
     };
+    const selectConstraint = {
+      start: today,
+      // end: '2022-04-15',
+    };
+
     console.log(results);
+    console.log(today);
     return isDev ? (
       <div className={classes.root}>
         <>
@@ -138,12 +144,13 @@
             weekends={false}
             nowIndicator
             headerToolbar={headerToolbar}
-            validRange={validRange}
+            // validRange={validRange}
             selectable
             select={handleDateClick}
             events={results}
             // selectAllow={selectAllow}
             eventClick={eventClick}
+            selectConstraint={selectConstraint}
           />
         </>
       </div>
@@ -151,7 +158,16 @@
   })(),
   styles: () => () => {
     return {
-      root: {},
+      root: {
+        '& td': {
+          '& .fc-day-past': {
+            backgroundColor: '#f2f2f2',
+          },
+        },
+        '& .fc-event-past': {
+          filter: 'brightness(50%)',
+        },
+      },
     };
   },
 }))();
