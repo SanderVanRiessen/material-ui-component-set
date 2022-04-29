@@ -36,10 +36,39 @@
         const newArray = [];
         // eslint-disable-next-line no-restricted-syntax
         for (const dataObject of data.results) {
+          let colorRoom;
+          switch (dataObject[calendarRoom]) {
+            case 'Auditorium':
+              colorRoom = '#3759e3';
+              break;
+            case 'Bordeel':
+              colorRoom = '#e50e4e';
+              break;
+            case 'Brink':
+              colorRoom = '#38bde3';
+              break;
+            case 'Huiskamer':
+              colorRoom = '#e06b13';
+              break;
+            case 'Kurk':
+              colorRoom = '#e2389a';
+              break;
+            case 'Matrix':
+              colorRoom = '#fac319';
+              break;
+            case 'Serverhok':
+              colorRoom = '#414897';
+              break;
+            case 'Washok':
+              colorRoom = '#39b6a6';
+              break;
+            default:
+          }
           const Newobject = {
             title: dataObject[calendarRoom],
             start: dataObject[calendarStart],
             end: dataObject[calendarEnd],
+            color: colorRoom,
           };
           newArray.push(Newobject);
         }
@@ -59,6 +88,7 @@
         </div>
       );
     }
+
     const { FullCalendar, dayGridPlugin, interactionPlugin, timeGridPlugin } =
       window.MaterialUI;
 
@@ -68,6 +98,10 @@
       left: 'timeGridWeek,timeGridDay',
       center: 'title',
       right: 'prev,today,next',
+    };
+
+    const footerToolbar = {
+      content: '<div><p>Hallo</p></div>',
     };
     const PageBuilderHeaderToolbar = {
       left: '',
@@ -144,6 +178,7 @@
             weekends={false}
             nowIndicator
             headerToolbar={headerToolbar}
+            footerToolbar={footerToolbar}
             // validRange={validRange}
             selectable
             select={handleDateClick}
@@ -153,6 +188,80 @@
             selectConstraint={selectConstraint}
           />
         </>
+        <div className="legend">
+          <div className="legendbox">
+            <div className="legenditem">
+              <div
+                className="colorBlock"
+                style={{ backgroundColor: '#3759e3' }}
+              />
+              <p>Auditorium</p>
+            </div>
+          </div>
+          <div className="legendbox">
+            <div className="legenditem">
+              <div
+                className="colorBlock"
+                style={{ backgroundColor: '#e50e4e' }}
+              />
+              <p>Bordeel</p>
+            </div>
+          </div>
+          <div className="legendbox">
+            <div className="legenditem">
+              <div
+                className="colorBlock"
+                style={{ backgroundColor: '#38bde3' }}
+              />
+              <p>Brink</p>
+            </div>
+          </div>
+          <div className="legendbox">
+            <div className="legenditem">
+              <div
+                className="colorBlock"
+                style={{ backgroundColor: '#e06b13' }}
+              />
+              <p>Huiskamer</p>
+            </div>
+          </div>
+          <div className="legendbox">
+            <div className="legenditem">
+              <div
+                className="colorBlock"
+                style={{ backgroundColor: '#e2389a' }}
+              />
+              <p>Kurk</p>
+            </div>
+          </div>
+          <div className="legendbox">
+            <div className="legenditem">
+              <div
+                className="colorBlock"
+                style={{ backgroundColor: '#fac319' }}
+              />
+              <p>Matrix</p>
+            </div>
+          </div>
+          <div className="legendbox">
+            <div className="legenditem">
+              <div
+                className="colorBlock"
+                style={{ backgroundColor: '#414897' }}
+              />
+              <p>Serverhok</p>
+            </div>
+          </div>
+          <div className="legendbox">
+            <div className="legenditem">
+              <div
+                className="colorBlock"
+                style={{ backgroundColor: '#39b6a6' }}
+              />
+              <p>Washok</p>
+            </div>
+          </div>
+        </div>
       </div>
     );
   })(),
@@ -174,6 +283,49 @@
         },
         '& h2': {
           fontFamily: 'Merriweather, serif',
+        },
+        '& .colorBlock': {
+          flexShrink: 0,
+          marginRight: '10px',
+          height: '15px',
+          width: '15px',
+          borderRadius: '3px',
+        },
+        '& .legendbox': {
+          width: '20%',
+          float: 'left',
+          paddingLeft: '2.5%',
+          paddingRight: '2.5%',
+        },
+        '& .legenditem': {
+          margin: '5px, 0px, 5px, 0px',
+          display: 'flex',
+          alignItems: 'center',
+        },
+        '& .fc-button': {
+          display: 'inline-block',
+          minHeight: '36px',
+          minWidth: '88px',
+          lineHeight: '36px',
+          verticalAlign: 'middle',
+          alignItems: 'center',
+          textAlign: 'center',
+          borderRadius: '2px',
+          userSelect: 'none',
+          outline: 'none',
+          border: '0',
+          letterSpacing: '.01em',
+          background: 'transparent',
+          color: 'currentColor',
+          fontWeight: '500',
+          fontStyle: 'inherit',
+          fontVariant: 'inherit',
+          fontFamily: 'inherit',
+          textDecoration: 'none',
+          overflow: 'hidden',
+        },
+        '& .fc-timegrid-event-harness': {
+          cursor: 'pointer',
         },
       },
     };
