@@ -121,6 +121,10 @@
       }
     }, [data]);
 
+    // const filterRoom = () => {
+    //   console.log('hi');
+    // };
+
     const headerToolbar = {
       left: 'timeGridWeek,timeGridDay',
       center: 'title',
@@ -200,6 +204,35 @@
       </div>
     ) : (
       <div className={classes.root}>
+        <div className="top-header">
+          <select
+            onChange="filterRoom(value)"
+            className="fc-button selectroom"
+            id="room"
+            name="room"
+          >
+            <option selected="">-- Select room --</option>
+            <option value="Auditorium">Auditorium</option>
+            <option value="Bordeel">Bordeel (cap. 8)</option>
+            <option value="Brink">Brink (cap. 8)</option>
+            <option value="Huiskamer">Huiskamer (cap. 4)</option>
+            <option value="Kurk">Kurk</option>
+            <option value="Matrix">Matrix (cap. 8)</option>
+            <option value="Serverhok">Serverhok (cap. 8)</option>
+            <option value="Washok">Washok (cap. 8)</option>
+          </select>
+
+          <div className="switch-container">
+            <div className="switch-grp">
+              <p className="switch-label">Only show my meetings</p>
+              <p className="switch">
+                <input type="checkbox" data-my-switch />
+                <span className="slider round" />
+              </p>
+            </div>
+          </div>
+        </div>
+
         <>
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
@@ -364,6 +397,19 @@
           textDecoration: 'none',
           overflow: 'hidden',
         },
+        '& .top-header': {
+          marginBottom: '2rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+        },
+        '& .selectroom': {
+          cursor: 'pointer',
+        },
+        '& .switch-container': {
+          display: 'flex',
+          alignItems: 'center',
+        },
+        '& .switch-grp': {},
         '& .fc-timegrid-event-harness': {
           cursor: 'pointer',
         },
