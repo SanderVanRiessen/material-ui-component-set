@@ -242,7 +242,6 @@
         : filter;
 
     const completeFilter = deepMerge(newFilter, interactionFilters);
-    console.log({ completeFilter, newFilter });
 
     const where = useFilter(completeFilter);
 
