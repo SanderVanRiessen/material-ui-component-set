@@ -16,46 +16,6 @@
 
     const calendarRef = React.useRef();
 
-    const rooms = [
-      {
-        name: '-- Select room --',
-        value: 'fwfwf',
-      },
-      {
-        name: 'Auditorium',
-        value: 'Auditorium',
-      },
-      {
-        name: 'Bordeel',
-        value: 'Bordeel',
-      },
-      {
-        name: 'Brink',
-        value: 'Brink',
-      },
-      {
-        name: 'Huiskamer',
-        value: 'Huiskamer',
-      },
-      {
-        name: 'Kurk',
-        value: 'Kurk',
-      },
-      {
-        name: 'Matrix',
-        value: 'Matrix',
-      },
-      {
-        name: 'Serverhok',
-        value: 'Serverhok',
-      },
-      {
-        name: 'Washok',
-        value: 'Washok',
-      },
-    ];
-    const [selectedOption, setSelectedOption] = useState(rooms[0].value);
-
     const currentWeekFilter = () => {
       const curr = new Date();
       curr.setHours(0, 0, 0, 0);
@@ -88,13 +48,9 @@
       const endTime = {};
       endTime[calendarEnd] = { lteq: end };
 
-      const roomName = {};
-      endTime[calendarRoom] = { eq: selectedOption };
-
       setFilter({
         ...startTime,
         ...endTime,
-        ...roomName,
       });
     };
 
@@ -249,27 +205,8 @@
     ) : (
       <div className={classes.root}>
         <div className="top-header">
-          <select
-            className="fc-button selectroom"
-            value={selectedOption}
-            onChange={(e) => setSelectedOption(e.target.value)}
-          >
-            {rooms.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.name}
-              </option>
-            ))}
-          </select>
-
-          <div className="switch-container">
-            <div className="switch-grp">
-              <p className="switch-label">Only show my meetings</p>
-              <p className="switch">
-                <input type="checkbox" data-my-switch />
-                <span className="slider round" />
-              </p>
-            </div>
-          </div>
+          {/* select */}
+          {/* switch */}
         </div>
 
         <>
@@ -441,14 +378,6 @@
           display: 'flex',
           justifyContent: 'space-between',
         },
-        '& .selectroom': {
-          cursor: 'pointer',
-        },
-        '& .switch-container': {
-          display: 'flex',
-          alignItems: 'center',
-        },
-        '& .switch-grp': {},
         '& .fc-timegrid-event-harness': {
           cursor: 'pointer',
         },
