@@ -16,6 +16,46 @@
 
     const calendarRef = React.useRef();
 
+    const rooms = [
+      {
+        name: '-- Select room --',
+        value: 'fwfwf',
+      },
+      {
+        name: 'Auditorium',
+        value: 'Auditorium',
+      },
+      {
+        name: 'Bordeel',
+        value: 'Bordeel',
+      },
+      {
+        name: 'Brink',
+        value: 'Brink',
+      },
+      {
+        name: 'Huiskamer',
+        value: 'Huiskamer',
+      },
+      {
+        name: 'Kurk',
+        value: 'Kurk',
+      },
+      {
+        name: 'Matrix',
+        value: 'Matrix',
+      },
+      {
+        name: 'Serverhok',
+        value: 'Serverhok',
+      },
+      {
+        name: 'Washok',
+        value: 'Washok',
+      },
+    ];
+    const [selectedOption, setSelectedOption] = useState(rooms[0].value);
+
     const currentWeekFilter = () => {
       const curr = new Date();
       curr.setHours(0, 0, 0, 0);
@@ -48,9 +88,13 @@
       const endTime = {};
       endTime[calendarEnd] = { lteq: end };
 
+      const roomName = {};
+      endTime[calendarRoom] = { eq: selectedOption };
+
       setFilter({
         ...startTime,
         ...endTime,
+        ...roomName,
       });
     };
 
@@ -206,20 +250,15 @@
       <div className={classes.root}>
         <div className="top-header">
           <select
-            onChange="filterRoom(value)"
             className="fc-button selectroom"
-            id="room"
-            name="room"
+            value={selectedOption}
+            onChange={(e) => setSelectedOption(e.target.value)}
           >
-            <option selected="">-- Select room --</option>
-            <option value="Auditorium">Auditorium</option>
-            <option value="Bordeel">Bordeel (cap. 8)</option>
-            <option value="Brink">Brink (cap. 8)</option>
-            <option value="Huiskamer">Huiskamer (cap. 4)</option>
-            <option value="Kurk">Kurk</option>
-            <option value="Matrix">Matrix (cap. 8)</option>
-            <option value="Serverhok">Serverhok (cap. 8)</option>
-            <option value="Washok">Washok (cap. 8)</option>
+            {rooms.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.name}
+              </option>
+            ))}
           </select>
 
           <div className="switch-container">
