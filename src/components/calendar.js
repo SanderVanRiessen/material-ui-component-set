@@ -8,7 +8,7 @@
     const { FullCalendar, dayGridPlugin, interactionPlugin, timeGridPlugin } =
       window.MaterialUI;
     const isDev = env === 'dev';
-    const { model, roomProperty, startProperty, endProperty } = options;
+    const { model, roomProperty, startProperty, endProperty, model2 } = options;
     const { name: calendarRoom } = getProperty(roomProperty) || {};
     const { name: calendarStart } = getProperty(startProperty) || {};
     const { name: calendarEnd } = getProperty(endProperty) || {};
@@ -73,6 +73,27 @@
           // }
         },
       });
+
+    const { data2 } =
+      model2 &&
+      useAllQuery(model2, {
+        take: 200,
+        onCompleted(res) {
+          const hasResult = res && res.result && res.result.length > 0;
+          if (hasResult) {
+            B.triggerEvent('onSuccess', res.results);
+          } else {
+            B.triggerEvent('onNoResults');
+          }
+        },
+        onError(resp) {
+          // if (!displayError) {
+          B.triggerEvent('onError', resp);
+          // }
+        },
+      });
+    console.log(data2);
+    console.log('Results:', results);
 
     useEffect(() => {
       if (!isDev && data) {

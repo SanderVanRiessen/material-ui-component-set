@@ -41,6 +41,56 @@
             dependsOn: 'model',
           },
         },
+        {
+          value: false,
+          label: 'Advanced settings',
+          key: 'advancedSettings',
+          type: 'TOGGLE',
+        },
+        {
+          value: '',
+          label: 'Model',
+          key: 'model2',
+          type: 'MODEL_AND_RELATION',
+          configuration: {
+            condition: {
+              type: 'SHOW',
+              option: 'advancedSettings',
+              comparator: 'EQ',
+              value: true,
+            },
+          },
+        },
+        {
+          value: '',
+          label: 'Room name',
+          key: 'roomNameProperty',
+          type: 'PROPERTY',
+          configuration: {
+            dependsOn: 'model2',
+            condition: {
+              type: 'SHOW',
+              option: 'advancedSettings',
+              comparator: 'EQ',
+              value: true,
+            },
+          },
+        },
+        {
+          value: '',
+          label: 'Room color',
+          key: 'roomColorProperty',
+          type: 'PROPERTY',
+          configuration: {
+            dependsOn: 'model2',
+            condition: {
+              type: 'SHOW',
+              option: 'advancedSettings',
+              comparator: 'EQ',
+              value: true,
+            },
+          },
+        },
       ],
       descendants: [
         {
