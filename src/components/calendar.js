@@ -13,8 +13,10 @@
     const { name: calendarStart } = getProperty(startProperty) || {};
     const { name: calendarEnd } = getProperty(endProperty) || {};
     const [results, setResults] = useState([]);
+    const [results2, setResults2] = useState([]);
 
     const calendarRef = React.useRef();
+    console.log(model2);
 
     const currentWeekFilter = () => {
       const curr = new Date();
@@ -74,27 +76,6 @@
         },
       });
 
-    const { data2 } =
-      model2 &&
-      useAllQuery(model2, {
-        take: 200,
-        onCompleted(res) {
-          const hasResult = res && res.result && res.result.length > 0;
-          if (hasResult) {
-            B.triggerEvent('onSuccess', res.results);
-          } else {
-            B.triggerEvent('onNoResults');
-          }
-        },
-        onError(resp) {
-          // if (!displayError) {
-          B.triggerEvent('onError', resp);
-          // }
-        },
-      });
-    console.log(data2);
-    console.log('Results:', results);
-
     useEffect(() => {
       if (!isDev && data) {
         const newArray = [];
@@ -142,9 +123,32 @@
       }
     }, [data]);
 
-    // const filterRoom = () => {
-    //   console.log('hi');
-    // };
+    const { data: roomData } =
+      model2 &&
+      useAllQuery(model2, {
+        take: 200,
+        onCompleted(res) {
+          const hasResult = res && res.result && res.result.length > 0;
+          if (hasResult) {
+            B.triggerEvent('onSuccess', res.results);
+          } else {
+            B.triggerEvent('onNoResults');
+          }
+        },
+        onError(resp) {
+          // if (!displayError) {
+          B.triggerEvent('onError', resp);
+          // }
+        },
+      });
+    console.log(roomData);
+
+    useEffect(() => {
+      if (!isDev && roomData) {
+        setResults2(roomData.results);
+      }
+    }, [roomData]);
+    console.log('Results2:', results2);
 
     const headerToolbar = {
       left: 'timeGridWeek,timeGridDay',
