@@ -50,7 +50,7 @@
         {
           value: '',
           label: 'Model',
-          key: 'model2',
+          key: 'modelAdvanced',
           type: 'MODEL_AND_RELATION',
           configuration: {
             condition: {
@@ -67,7 +67,7 @@
           key: 'roomNameProperty',
           type: 'PROPERTY',
           configuration: {
-            dependsOn: 'model2',
+            dependsOn: 'modelAdvanced',
             condition: {
               type: 'SHOW',
               option: 'advancedSettings',
@@ -82,7 +82,7 @@
           key: 'roomColorProperty',
           type: 'PROPERTY',
           configuration: {
-            dependsOn: 'model2',
+            dependsOn: 'modelAdvanced',
             condition: {
               type: 'SHOW',
               option: 'advancedSettings',

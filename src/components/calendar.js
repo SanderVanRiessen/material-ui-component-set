@@ -8,7 +8,8 @@
     const { FullCalendar, dayGridPlugin, interactionPlugin, timeGridPlugin } =
       window.MaterialUI;
     const isDev = env === 'dev';
-    const { model, roomProperty, startProperty, endProperty, model2 } = options;
+    const { model, roomProperty, startProperty, endProperty, modelAdvanced } =
+      options;
     const { name: calendarRoom } = getProperty(roomProperty) || {};
     const { name: calendarStart } = getProperty(startProperty) || {};
     const { name: calendarEnd } = getProperty(endProperty) || {};
@@ -180,8 +181,8 @@
     }, [data]);
 
     const { data: roomData } =
-      model2 &&
-      useAllQuery(model2, {
+      modelAdvanced &&
+      useAllQuery(modelAdvanced, {
         take: 200,
         onCompleted(res) {
           const hasResult = res && res.result && res.result.length > 0;
@@ -312,7 +313,6 @@
           {/* select */}
           {/* switch */}
         </div>
-
         <>
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
@@ -339,78 +339,17 @@
         </>
 
         <div className="legend">
-          <div className="legendbox">
-            <div className="legenditem">
-              <div
-                className="colorBlock"
-                style={{ backgroundColor: '#3759e3' }}
-              />
-              <p>Auditorium</p>
+          {results2.map((legend) => (
+            <div key={legend.id} className="legendbox">
+              <div className="legenditem">
+                <div
+                  className="colorBlock"
+                  style={{ backgroundColor: legend.color }}
+                />
+                <p>{legend.name}</p>
+              </div>
             </div>
-          </div>
-          <div className="legendbox">
-            <div className="legenditem">
-              <div
-                className="colorBlock"
-                style={{ backgroundColor: '#e50e4e' }}
-              />
-              <p>Bordeel</p>
-            </div>
-          </div>
-          <div className="legendbox">
-            <div className="legenditem">
-              <div
-                className="colorBlock"
-                style={{ backgroundColor: '#38bde3' }}
-              />
-              <p>Brink</p>
-            </div>
-          </div>
-          <div className="legendbox">
-            <div className="legenditem">
-              <div
-                className="colorBlock"
-                style={{ backgroundColor: '#e06b13' }}
-              />
-              <p>Huiskamer</p>
-            </div>
-          </div>
-          <div className="legendbox">
-            <div className="legenditem">
-              <div
-                className="colorBlock"
-                style={{ backgroundColor: '#e2389a' }}
-              />
-              <p>Kurk</p>
-            </div>
-          </div>
-          <div className="legendbox">
-            <div className="legenditem">
-              <div
-                className="colorBlock"
-                style={{ backgroundColor: '#fac319' }}
-              />
-              <p>Matrix</p>
-            </div>
-          </div>
-          <div className="legendbox">
-            <div className="legenditem">
-              <div
-                className="colorBlock"
-                style={{ backgroundColor: '#414897' }}
-              />
-              <p>Serverhok</p>
-            </div>
-          </div>
-          <div className="legendbox">
-            <div className="legenditem">
-              <div
-                className="colorBlock"
-                style={{ backgroundColor: '#39b6a6' }}
-              />
-              <p>Washok</p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     );
