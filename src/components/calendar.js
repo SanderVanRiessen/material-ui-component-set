@@ -4,7 +4,7 @@
   allowedTypes: [],
   orientation: 'HORIZONTAL',
   jsx: (() => {
-    const { env, useAllQuery, getProperty } = B;
+    const { env, useAllQuery, getProperty, useFilter } = B;
     const { FullCalendar, dayGridPlugin, interactionPlugin, timeGridPlugin } =
       window.MaterialUI;
     const isDev = env === 'dev';
@@ -14,9 +14,38 @@
     const { name: calendarEnd } = getProperty(endProperty) || {};
     const [results, setResults] = useState([]);
     const [results2, setResults2] = useState([]);
+    const [interactionFilter, setInteractionFilter] = useState({});
 
     const calendarRef = React.useRef();
-    console.log(model2);
+
+    const transformValue = (value) => {
+      if (value instanceof Date) {
+        return value.toISOString();
+      }
+
+      return value;
+    };
+
+    const deepMerge = (...objects) => {
+      const isObject = (item) =>
+        item && typeof item === 'object' && !Array.isArray(item);
+
+      return objects.reduce((accumulator, object) => {
+        Object.keys(object).forEach((key) => {
+          const accumulatorValue = accumulator[key];
+          const value = object[key];
+
+          if (Array.isArray(accumulatorValue) && Array.isArray(value)) {
+            accumulator[key] = accumulatorValue.concat(value);
+          } else if (isObject(accumulatorValue) && isObject(value)) {
+            accumulator[key] = deepMerge(accumulatorValue, value);
+          } else {
+            accumulator[key] = value;
+          }
+        });
+        return accumulator;
+      }, {});
+    };
 
     const currentWeekFilter = () => {
       const curr = new Date();
@@ -56,10 +85,39 @@
       });
     };
 
-    const { data } =
+    let interactionFilters = {};
+
+    const isEmptyValue = (value) =>
+      !value || (Array.isArray(value) && value.length === 0);
+
+    const clauses = Object.entries(interactionFilter)
+      .filter(([, { value }]) => !isEmptyValue(value))
+      .map(([, { property, value }]) =>
+        property.id.reduceRight((acc, field, index, arr) => {
+          const isLast = index === arr.length - 1;
+          if (isLast) {
+            return Array.isArray(value)
+              ? {
+                  _or: value.map((el) => ({
+                    [field]: { [property.operator]: el },
+                  })),
+                }
+              : { [field]: { [property.operator]: value } };
+          }
+
+          return { [field]: acc };
+        }, {}),
+      );
+    interactionFilters =
+      clauses.length > 1 ? { _and: clauses } : clauses[0] || {};
+
+    const where = useFilter(interactionFilters);
+    const completeFilter = deepMerge(filter, where);
+
+    const { data, refetch } =
       model &&
       useAllQuery(model, {
-        rawFilter: filter,
+        rawFilter: completeFilter,
         take: 200,
         onCompleted(res) {
           const hasResult = res && res.result && res.result.length > 0;
@@ -70,9 +128,7 @@
           }
         },
         onError(resp) {
-          // if (!displayError) {
           B.triggerEvent('onError', resp);
-          // }
         },
       });
 
@@ -136,19 +192,42 @@
           }
         },
         onError(resp) {
-          // if (!displayError) {
           B.triggerEvent('onError', resp);
-          // }
         },
       });
-    console.log(roomData);
 
     useEffect(() => {
       if (!isDev && roomData) {
         setResults2(roomData.results);
       }
     }, [roomData]);
+    console.log('Results:', results);
     console.log('Results2:', results2);
+
+    useEffect(() => {
+      B.defineFunction('Refetch', () => refetch());
+
+      /**
+       * @name Filter
+       * @param {Property} property
+       * @returns {Void}
+       */
+      B.defineFunction('Filter', ({ event, property, interactionId }) => {
+        setInteractionFilter((s) => ({
+          ...s,
+          [interactionId]: {
+            property,
+            value: event.target ? event.target.value : transformValue(event),
+          },
+        }));
+        console.log('event', event);
+        console.log('property', property);
+      });
+
+      B.defineFunction('ResetFilter', () => {
+        setInteractionFilter({});
+      });
+    }, []);
 
     const headerToolbar = {
       left: 'timeGridWeek,timeGridDay',
