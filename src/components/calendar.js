@@ -10,18 +10,22 @@
     const isDev = env === 'dev';
     const {
       model,
-      roomProperty,
+      nameProperty,
       startProperty,
       endProperty,
       colorProperty,
       modelAdvanced,
+      eventNameProperty,
+      eventColorProperty,
     } = options;
-    const { name: calendarRoom } = getProperty(roomProperty) || {};
+    const { name: calendarname } = getProperty(nameProperty) || {};
     const { name: calendarStart } = getProperty(startProperty) || {};
     const { name: calendarEnd } = getProperty(endProperty) || {};
     const { name: calendarColor } = getProperty(colorProperty) || {};
+    const { name: eventName } = getProperty(eventNameProperty) || {};
+    const { name: eventColor } = getProperty(eventColorProperty) || {};
     const [results, setResults] = useState([]);
-    const [results2, setResults2] = useState([]);
+    const [resultsEvent, setResultsEvent] = useState([]);
     const [interactionFilter, setInteractionFilter] = useState({});
 
     const calendarRef = React.useRef();
@@ -139,27 +143,24 @@
           B.triggerEvent('onError', resp);
         },
       });
-    console.log('results:', results);
 
     useEffect(() => {
       if (!isDev && data) {
         const newArray = [];
-        // eslint-disable-next-line no-restricted-syntax
-        for (const dataObject of data.results) {
+        data.results.forEach((dataObject) => {
           const Newobject = {
-            title: dataObject[calendarRoom],
+            title: dataObject[calendarname],
             start: dataObject[calendarStart],
             end: dataObject[calendarEnd],
             color: dataObject[calendarColor],
           };
-
           newArray.push(Newobject);
-        }
+        });
         setResults(newArray);
       }
     }, [data]);
 
-    const { data: roomData } =
+    const { data: eventData } =
       modelAdvanced &&
       useAllQuery(modelAdvanced, {
         take: 200,
@@ -177,12 +178,22 @@
       });
 
     useEffect(() => {
-      if (!isDev && roomData) {
-        setResults2(roomData.results);
+      if (!isDev && eventData) {
+        const legendArray = [];
+        // eslint-disable-next-line no-restricted-syntax
+        data.results.forEach((dataObject) => {
+          const legendObject = {
+            title: dataObject[eventName],
+            color: dataObject[eventColor],
+            id: dataObject.id,
+          };
+
+          legendArray.push(legendObject);
+        });
+        console.log('TITLE:', legendArray[0].title);
+        setResultsEvent(legendArray);
       }
-    }, [roomData]);
-    console.log('Results:', results);
-    console.log('Results2:', results2);
+    }, [eventData]);
 
     useEffect(() => {
       B.defineFunction('Refetch', () => refetch());
@@ -200,14 +211,13 @@
             value: event.target ? event.target.value : transformValue(event),
           },
         }));
-        console.log('event', event);
-        console.log('property', property);
       });
 
       B.defineFunction('ResetFilter', () => {
         setInteractionFilter({});
       });
     }, []);
+    console.log(results);
 
     const headerToolbar = {
       left: 'timeGridWeek,timeGridDay',
@@ -318,14 +328,14 @@
         </>
 
         <div className="legend">
-          {results2.map((legend) => (
+          {resultsEvent.map((legend) => (
             <div key={legend.id} className="legendbox">
               <div className="legenditem">
                 <div
                   className="colorBlock"
                   style={{ backgroundColor: legend.color }}
                 />
-                <p>{legend.name}</p>
+                <p>{legend.title}</p>
               </div>
             </div>
           ))}

@@ -16,8 +16,8 @@
         },
         {
           value: '',
-          label: 'Calendar Room',
-          key: 'roomProperty',
+          label: 'Calendar Event Name',
+          key: 'nameProperty',
           type: 'PROPERTY',
           configuration: {
             dependsOn: 'model',
@@ -25,7 +25,7 @@
         },
         {
           value: '',
-          label: 'Calendar Start Time',
+          label: 'Calendar Event Start Time',
           key: 'startProperty',
           type: 'PROPERTY',
           configuration: {
@@ -34,7 +34,7 @@
         },
         {
           value: '',
-          label: 'Calendar End Time',
+          label: 'Calendar Event End Time',
           key: 'endProperty',
           type: 'PROPERTY',
           configuration: {
@@ -52,7 +52,7 @@
         },
         {
           value: false,
-          label: 'Advanced settings',
+          label: 'Legend Options',
           key: 'advancedSettings',
           type: 'TOGGLE',
         },
@@ -72,8 +72,8 @@
         },
         {
           value: '',
-          label: 'Room name',
-          key: 'roomNameProperty',
+          label: 'Event name',
+          key: 'eventNameProperty',
           type: 'PROPERTY',
           configuration: {
             dependsOn: 'modelAdvanced',
@@ -87,8 +87,8 @@
         },
         {
           value: '',
-          label: 'Room color',
-          key: 'roomColorProperty',
+          label: 'Event color',
+          key: 'eventColorProperty',
           type: 'PROPERTY',
           configuration: {
             dependsOn: 'modelAdvanced',
