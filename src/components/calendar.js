@@ -8,11 +8,18 @@
     const { FullCalendar, dayGridPlugin, interactionPlugin, timeGridPlugin } =
       window.MaterialUI;
     const isDev = env === 'dev';
-    const { model, roomProperty, startProperty, endProperty, modelAdvanced } =
-      options;
+    const {
+      model,
+      roomProperty,
+      startProperty,
+      endProperty,
+      colorProperty,
+      modelAdvanced,
+    } = options;
     const { name: calendarRoom } = getProperty(roomProperty) || {};
     const { name: calendarStart } = getProperty(startProperty) || {};
     const { name: calendarEnd } = getProperty(endProperty) || {};
+    const { name: calendarColor } = getProperty(colorProperty) || {};
     const [results, setResults] = useState([]);
     const [results2, setResults2] = useState([]);
     const [interactionFilter, setInteractionFilter] = useState({});
@@ -132,46 +139,18 @@
           B.triggerEvent('onError', resp);
         },
       });
+    console.log('results:', results);
 
     useEffect(() => {
       if (!isDev && data) {
         const newArray = [];
         // eslint-disable-next-line no-restricted-syntax
         for (const dataObject of data.results) {
-          let colorRoom;
-          switch (dataObject[calendarRoom]) {
-            case 'Auditorium':
-              colorRoom = '#3759e3';
-              break;
-            case 'Bordeel':
-              colorRoom = '#e50e4e';
-              break;
-            case 'Brink':
-              colorRoom = '#38bde3';
-              break;
-            case 'Huiskamer':
-              colorRoom = '#e06b13';
-              break;
-            case 'Kurk':
-              colorRoom = '#e2389a';
-              break;
-            case 'Matrix':
-              colorRoom = '#fac319';
-              break;
-            case 'Serverhok':
-              colorRoom = '#414897';
-              break;
-            case 'Washok':
-              colorRoom = '#39b6a6';
-              break;
-            default:
-          }
-
           const Newobject = {
             title: dataObject[calendarRoom],
             start: dataObject[calendarStart],
             end: dataObject[calendarEnd],
-            color: colorRoom,
+            color: dataObject[calendarColor],
           };
 
           newArray.push(Newobject);

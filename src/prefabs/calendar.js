@@ -42,6 +42,15 @@
           },
         },
         {
+          value: '',
+          label: 'Calendar Event Color',
+          key: 'colorProperty',
+          type: 'PROPERTY',
+          configuration: {
+            dependsOn: 'model',
+          },
+        },
+        {
           value: false,
           label: 'Advanced settings',
           key: 'advancedSettings',
