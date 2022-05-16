@@ -180,8 +180,7 @@
     useEffect(() => {
       if (!isDev && eventData) {
         const legendArray = [];
-        // eslint-disable-next-line no-restricted-syntax
-        data.results.forEach((dataObject) => {
+        eventData.results.forEach((dataObject) => {
           const legendObject = {
             title: dataObject[eventName],
             color: dataObject[eventColor],
@@ -190,7 +189,6 @@
 
           legendArray.push(legendObject);
         });
-        console.log('TITLE:', legendArray[0].title);
         setResultsEvent(legendArray);
       }
     }, [eventData]);
@@ -272,7 +270,10 @@
       alert('Event :', info.event.title);
     };
 
-    const handleDateClick = () => {};
+    const selectHandler = (selectionInfo) => {
+      alert(selectionInfo.start);
+      alert(selectionInfo.end);
+    };
 
     const today = new Date().toISOString().slice(0, 10);
 
@@ -318,9 +319,9 @@
             headerToolbar={headerToolbar}
             footerToolbar={footerToolbar}
             selectable
-            select={handleDateClick}
-            events={results}
+            select={selectHandler}
             eventClick={eventClick}
+            events={results}
             selectConstraint={selectConstraint}
             customButtons={customButtons}
             ref={calendarRef}
