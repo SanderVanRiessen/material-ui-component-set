@@ -110,9 +110,9 @@
           if (isLast) {
             return Array.isArray(value)
               ? {
-                  _or: value.map((el) => ({
-                    [field]: { [property.operator]: el },
-                  })),
+                  // _or: value.map((el) => ({
+                  [field]: { [property.operator]: value[0] },
+                  // })),
                 }
               : { [field]: { [property.operator]: value } };
           }
