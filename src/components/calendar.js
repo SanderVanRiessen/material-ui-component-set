@@ -17,6 +17,7 @@
       modelAdvanced,
       eventNameProperty,
       eventColorProperty,
+      filter,
     } = options;
     const { name: calendarname } = getProperty(nameProperty) || {};
     const { name: calendarStart } = getProperty(startProperty) || {};
@@ -82,7 +83,7 @@
     };
 
     const currentWeek = currentWeekFilter();
-    const [filter, setFilter] = useState(currentWeek);
+    const [eventfilter, setEventFilter] = useState(currentWeek);
 
     const weekFilter = (start, end) => {
       const startTime = {};
@@ -91,7 +92,7 @@
       const endTime = {};
       endTime[calendarEnd] = { lteq: end };
 
-      setFilter({
+      setEventFilter({
         ...startTime,
         ...endTime,
       });
@@ -124,7 +125,11 @@
       clauses.length > 1 ? { _and: clauses } : clauses[0] || {};
 
     const where = useFilter(interactionFilters);
-    const completeFilter = deepMerge(filter, where);
+    const optionfilter = useFilter(filter);
+    console.log('where:', where);
+    console.log('of', optionfilter);
+    const completeFilter = deepMerge(eventfilter, where, optionfilter);
+    console.log('cfilter:', completeFilter);
 
     const { data, refetch } =
       model &&

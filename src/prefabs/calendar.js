@@ -15,6 +15,15 @@
           type: 'MODEL_AND_RELATION',
         },
         {
+          value: {},
+          label: 'Filter',
+          key: 'filter',
+          type: 'FILTER',
+          configuration: {
+            dependsOn: 'model',
+          },
+        },
+        {
           value: '',
           label: 'Calendar Event Name',
           key: 'nameProperty',
