@@ -9,6 +9,15 @@
       name: 'calendar',
       options: [
         {
+          label: 'Toggle visibility',
+          key: 'visible',
+          value: true,
+          type: 'TOGGLE',
+          configuration: {
+            as: 'VISIBILITY',
+          },
+        },
+        {
           value: '',
           label: 'Model',
           key: 'model',

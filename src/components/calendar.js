@@ -18,6 +18,7 @@
       eventNameProperty,
       eventColorProperty,
       filter,
+      visible,
     } = options;
     const { name: calendarname } = getProperty(nameProperty) || {};
     const { name: calendarStart } = getProperty(startProperty) || {};
@@ -25,9 +26,11 @@
     const { name: calendarColor } = getProperty(colorProperty) || {};
     const { name: eventName } = getProperty(eventNameProperty) || {};
     const { name: eventColor } = getProperty(eventColorProperty) || {};
+
     const [results, setResults] = useState([]);
     const [resultsEvent, setResultsEvent] = useState([]);
     const [interactionFilter, setInteractionFilter] = useState({});
+    const [isVisible, setIsVisible] = useState(true);
 
     const calendarRef = React.useRef();
 
@@ -126,10 +129,8 @@
 
     const where = useFilter(interactionFilters);
     const optionfilter = useFilter(filter);
-    console.log('where:', where);
-    console.log('of', optionfilter);
+
     const completeFilter = deepMerge(eventfilter, where, optionfilter);
-    console.log('cfilter:', completeFilter);
 
     const { data, refetch } =
       model &&
@@ -199,6 +200,12 @@
     }, [eventData]);
 
     useEffect(() => {
+      setIsVisible(visible);
+    }, []);
+
+    useEffect(() => {
+      B.defineFunction('Hide', () => setIsVisible(false));
+      B.defineFunction('Show', () => setIsVisible(true));
       B.defineFunction('Refetch', () => refetch());
 
       /**
@@ -220,7 +227,7 @@
         setInteractionFilter({});
       });
     }, []);
-    console.log(results);
+    console.log('results:', results);
 
     const headerToolbar = {
       left: 'timeGridWeek,timeGridDay',
@@ -286,6 +293,7 @@
       start: today,
     };
 
+    // eslint-disable-next-line no-nested-ternary
     return isDev ? (
       <div className={classes.root}>
         <>
@@ -302,12 +310,9 @@
           />
         </>
       </div>
-    ) : (
+    ) : isVisible ? (
       <div className={classes.root}>
-        <div className="top-header">
-          {/* select */}
-          {/* switch */}
-        </div>
+        <div className="top-header" />
         <>
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
@@ -347,6 +352,8 @@
           ))}
         </div>
       </div>
+    ) : (
+      <p />
     );
   })(),
   styles: () => () => {
@@ -359,6 +366,8 @@
         },
         '& .fc': {
           fontFamily: 'Ubuntu, sans-serif',
+          overflow: 'auto !important',
+          height: 'auto !important',
         },
         '& td': {
           '& .fc-day-past': {
