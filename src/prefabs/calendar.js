@@ -70,6 +70,68 @@
         },
         {
           value: false,
+          label: 'Slot Options',
+          key: 'slotSettings',
+          type: 'TOGGLE',
+        },
+        {
+          type: 'TEXT',
+          label: 'slot Min Time',
+          key: 'slotMinTime',
+          value: '07:00:00',
+          configuration: {
+            condition: {
+              type: 'SHOW',
+              option: 'slotSettings',
+              comparator: 'EQ',
+              value: true,
+            },
+          },
+        },
+        {
+          type: 'TEXT',
+          label: 'slot Max Time',
+          key: 'slotMaxTime',
+          value: '21:00:00',
+          configuration: {
+            condition: {
+              type: 'SHOW',
+              option: 'slotSettings',
+              comparator: 'EQ',
+              value: true,
+            },
+          },
+        },
+        {
+          type: 'TEXT',
+          label: 'slot Duration',
+          key: 'slotDuration',
+          value: '00:30:00',
+          configuration: {
+            condition: {
+              type: 'SHOW',
+              option: 'slotSettings',
+              comparator: 'EQ',
+              value: true,
+            },
+          },
+        },
+        {
+          type: 'TEXT',
+          label: 'slot Label Interval',
+          key: 'slotLabelInterval',
+          value: '01:00:00',
+          configuration: {
+            condition: {
+              type: 'SHOW',
+              option: 'slotSettings',
+              comparator: 'EQ',
+              value: true,
+            },
+          },
+        },
+        {
+          value: false,
           label: 'Legend Options',
           key: 'advancedSettings',
           type: 'TOGGLE',

@@ -19,6 +19,10 @@
       eventColorProperty,
       filter,
       visible,
+      slotMinTime,
+      slotMaxTime,
+      slotDuration,
+      slotLabelInterval,
     } = options;
     const { name: calendarname } = getProperty(nameProperty) || {};
     const { name: calendarStart } = getProperty(startProperty) || {};
@@ -32,7 +36,7 @@
     const [interactionFilter, setInteractionFilter] = useState({});
     const [isVisible, setIsVisible] = useState(true);
 
-    const calendarRef = React.useRef();
+    const calendarRef = useRef();
 
     const transformValue = (value) => {
       if (value instanceof Date) {
@@ -101,8 +105,6 @@
       });
     };
 
-    let interactionFilters = {};
-
     const isEmptyValue = (value) =>
       !value || (Array.isArray(value) && value.length === 0);
 
@@ -124,7 +126,7 @@
           return { [field]: acc };
         }, {}),
       );
-    interactionFilters =
+    const interactionFilters =
       clauses.length > 1 ? { _and: clauses } : clauses[0] || {};
 
     const where = useFilter(interactionFilters);
@@ -236,10 +238,6 @@
       right: 'prev,today,next',
     };
 
-    const footerToolbar = {
-      content: '<div><p>Hallo</p></div>',
-    };
-
     const PageBuilderHeaderToolbar = {
       left: '',
       center: 'title',
@@ -290,72 +288,70 @@
 
     const today = new Date().toISOString().slice(0, 10);
 
-    const selectConstraint = {
-      start: today,
-    };
-
-    // eslint-disable-next-line no-nested-ternary
-    return isDev ? (
-      <div className={classes.root}>
-        <>
-          <FullCalendar
-            plugins={[dayGridPlugin, timeGridPlugin]}
-            initialView="timeGridWeek"
-            contentHeight="auto"
-            headerToolbar={PageBuilderHeaderToolbar}
-            weekends={false}
-            allDaySlot={false}
-            slotMinTime="07:00:00"
-            slotMaxTime="21:00:00"
-            slotLabelFormat={slotLabelFormat}
-          />
-        </>
-      </div>
-    ) : isVisible ? (
-      <div className={classes.root}>
-        <div className="top-header" />
-        <>
-          <FullCalendar
-            plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-            initialView="timeGridWeek"
-            contentHeight="auto"
-            allDaySlot={false}
-            slotMinTime="07:00:00"
-            slotMaxTime="21:00:00"
-            slotLabelFormat={slotLabelFormat}
-            // slotDuration="00:15:00"
-            // slotLabelInterval="00:60:00"
-            weekends={false}
-            nowIndicator
-            headerToolbar={headerToolbar}
-            footerToolbar={footerToolbar}
-            selectable
-            select={selectHandler}
-            eventClick={eventClick}
-            events={results}
-            selectConstraint={selectConstraint}
-            customButtons={customButtons}
-            ref={calendarRef}
-          />
-        </>
-
-        <div className="legend">
-          {resultsEvent.map((legend) => (
-            <div key={legend.id} className="legendbox">
-              <div className="legenditem">
-                <div
-                  className="colorBlock"
-                  style={{ backgroundColor: legend.color }}
-                />
-                <p>{legend.title}</p>
-              </div>
-            </div>
-          ))}
+    if (isDev) {
+      return (
+        <div className={classes.root}>
+          <>
+            <FullCalendar
+              plugins={[dayGridPlugin, timeGridPlugin]}
+              initialView="timeGridWeek"
+              contentHeight="auto"
+              headerToolbar={PageBuilderHeaderToolbar}
+              weekends={false}
+              allDaySlot={false}
+              slotMinTime="07:00:00"
+              slotMaxTime="21:00:00"
+              slotLabelFormat={slotLabelFormat}
+            />
+          </>
         </div>
-      </div>
-    ) : (
-      <p />
-    );
+      );
+    }
+    if (isVisible) {
+      return (
+        <div className={classes.root}>
+          <div className="top-header" />
+          <>
+            <FullCalendar
+              plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
+              initialView="timeGridWeek"
+              contentHeight="auto"
+              allDaySlot={false}
+              slotMinTime={slotMinTime}
+              slotMaxTime={slotMaxTime}
+              slotLabelFormat={slotLabelFormat}
+              slotDuration={slotDuration}
+              slotLabelInterval={slotLabelInterval}
+              weekends={false}
+              nowIndicator
+              headerToolbar={headerToolbar}
+              selectable
+              select={selectHandler}
+              eventClick={eventClick}
+              events={results}
+              selectConstraint={{ start: today }}
+              customButtons={customButtons}
+              ref={calendarRef}
+            />
+          </>
+
+          <div className="legend">
+            {resultsEvent.map((legend) => (
+              <div key={legend.id} className="legendbox">
+                <div className="legenditem">
+                  <div
+                    className="colorBlock"
+                    style={{ backgroundColor: legend.color }}
+                  />
+                  <p>{legend.title}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    return <></>;
   })(),
   styles: () => () => {
     return {
@@ -387,6 +383,9 @@
           height: '15px',
           width: '15px',
           borderRadius: '3px',
+        },
+        '& .legend': {
+          marginBottom: '3rem',
         },
         '& .legendbox': {
           width: '20%',
