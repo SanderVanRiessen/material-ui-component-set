@@ -35,6 +35,7 @@
     const [resultsEvent, setResultsEvent] = useState([]);
     const [interactionFilter, setInteractionFilter] = useState({});
     const [isVisible, setIsVisible] = useState(true);
+    const [, setOptions] = useOptions();
 
     const calendarRef = useRef();
 
@@ -157,6 +158,7 @@
         const newArray = [];
         data.results.forEach((dataObject) => {
           const Newobject = {
+            id: dataObject.id,
             title: dataObject[calendarname],
             start: dataObject[calendarStart],
             end: dataObject[calendarEnd],
@@ -206,11 +208,18 @@
     }, []);
 
     useEffect(() => {
+      B.defineFunction('setCurrentRecord', (value) => {
+        const id = Number(value);
+        if (typeof id === 'number') {
+          setOptions({
+            currentRecord: id,
+          });
+        }
+      });
       B.defineFunction('Hide', () => setIsVisible(false));
       B.defineFunction('Show', () => setIsVisible(true));
       B.defineFunction('Show/Hide', () => setIsVisible((s) => !s));
       B.defineFunction('Refetch', () => refetch());
-
       /**
        * @name Filter
        * @param {Property} property
@@ -278,12 +287,16 @@
     };
 
     const eventClick = (info) => {
-      alert('Event :', info.event.title);
+      const event = results.find((e) => e.id === parseInt(info.event.id, 10));
+      const context = { modelData: event };
+      B.triggerEvent('OnEventClick', null, context);
     };
 
     const selectHandler = (selectionInfo) => {
-      alert(selectionInfo.start);
-      alert(selectionInfo.end);
+      const start = selectionInfo.startStr;
+      const end = selectionInfo.startStr;
+      B.triggerEvent('SelectEventStart', null, start);
+      B.triggerEvent('SelectEventEnd', null, end);
     };
 
     const today = new Date().toISOString().slice(0, 10);
