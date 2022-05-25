@@ -239,7 +239,6 @@
         setInteractionFilter({});
       });
     }, []);
-    console.log('results:', results);
 
     const headerToolbar = {
       left: 'timeGridWeek,timeGridDay',
@@ -292,13 +291,16 @@
       B.triggerEvent('OnEventClick', null, context);
     };
 
-    const selectHandler = (selectionInfo) => {
-      const start = selectionInfo.startStr;
-      const end = selectionInfo.startStr;
-      B.triggerEvent('SelectEventStart', null, start);
-      B.triggerEvent('SelectEventEnd', null, end);
-    };
+    const selectHandlerStart = (selectionInfo) => {
+      const eventStartTime = selectionInfo.start;
+      B.triggerEvent('SelectEventStart', eventStartTime);
+      const eventEndTime = selectionInfo.end;
+      B.triggerEvent('SelectEventEnd', eventEndTime);
+      // check if eventType is Room or Car
+      // trigger on room
 
+      // trigger on car
+    };
     const today = new Date().toISOString().slice(0, 10);
 
     if (isDev) {
@@ -339,7 +341,7 @@
               nowIndicator
               headerToolbar={headerToolbar}
               selectable
-              select={selectHandler}
+              select={selectHandlerStart}
               eventClick={eventClick}
               events={results}
               selectConstraint={{ start: today }}

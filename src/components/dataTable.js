@@ -442,6 +442,7 @@
     };
 
     const handleRowClick = (endpoint, context) => {
+      console.log({ context });
       if (isDev) return;
       B.triggerEvent('OnRowClick', endpoint, context);
 

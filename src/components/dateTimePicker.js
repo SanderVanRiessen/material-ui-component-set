@@ -132,6 +132,10 @@
 
     B.defineFunction('Clear', () => setSelectedDate(null));
 
+    B.defineFunction('SetValue', (eventTime) => {
+      setSelectedDate(eventTime);
+    });
+
     let DateTimeComponent;
     let format;
     let resultString;

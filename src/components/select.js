@@ -208,8 +208,12 @@
       };
     }, []);
 
-    const { results } = data || {};
+    B.defineFunction('SetValue', (SetValue) => {
+      setCurrentValue(SetValue);
+      console.log('My setvalue is: ', SetValue);
+    });
 
+    const { results } = data || {};
     useEffect(() => {
       B.defineFunction('Refetch', () => refetch());
 
