@@ -260,6 +260,12 @@
       hour12: false,
     };
 
+    const eventTimeFormat = {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    };
+
     const customButtons = {
       prev: {
         click: () => {
@@ -338,6 +344,7 @@
               slotDuration={slotDuration}
               slotLabelInterval={slotLabelInterval}
               weekends={false}
+              eventTimeFormat={eventTimeFormat}
               nowIndicator
               headerToolbar={headerToolbar}
               selectable
