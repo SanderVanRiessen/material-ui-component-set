@@ -64,6 +64,46 @@
                 value: 'lteq',
               },
             ],
+            condition: {
+              type: 'SHOW',
+              option: 'now',
+              comparator: 'EQ',
+              value: false,
+            },
+          },
+        },
+        {
+          type: 'CUSTOM',
+          label: 'Compare',
+          key: 'customCompare',
+          value: 'eq',
+          configuration: {
+            as: 'DROPDOWN',
+            dataType: 'string',
+            allowedInput: [
+              {
+                name: 'Greater than',
+                value: 'gt',
+              },
+              {
+                name: 'Less than',
+                value: 'lt',
+              },
+              {
+                name: 'Greater than or equal to',
+                value: 'gteq',
+              },
+              {
+                name: 'Less than or equal to',
+                value: 'lteq',
+              },
+            ],
+            condition: {
+              type: 'SHOW',
+              option: 'now',
+              comparator: 'EQ',
+              value: true,
+            },
           },
         },
         {
@@ -71,6 +111,20 @@
           label: 'Right',
           key: 'right',
           value: [],
+          configuration: {
+            condition: {
+              type: 'SHOW',
+              option: 'now',
+              comparator: 'EQ',
+              value: false,
+            },
+          },
+        },
+        {
+          value: false,
+          label: 'Now',
+          key: 'now',
+          type: 'TOGGLE',
         },
         {
           value: false,

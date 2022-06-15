@@ -7,7 +7,9 @@
     const {
       left,
       right,
+      now,
       compare,
+      customCompare,
       visible: initVisibility,
       dataComponentAttribute,
     } = options;
@@ -17,6 +19,7 @@
     const mounted = useRef(false);
     const leftText = useText(left);
     const rightText = useText(right);
+    const isnow = new Date(Date.now());
     const [leftValue, setLeftValue] = useState(leftText);
     const [rightValue, setRightValue] = useState(rightText);
     const [visible, setVisible] = useState(initVisibility);
@@ -28,24 +31,37 @@
       if (!initVisibility && leftValue === '' && rightValue === '') {
         return false;
       }
-
-      switch (compare) {
-        case 'neq':
-          return leftValue !== rightValue;
-        case 'contains':
-          return leftValue.indexOf(rightValue) > -1;
-        case 'notcontains':
-          return leftValue.indexOf(rightValue) < 0;
-        case 'gt':
-          return leftAsNumber > rightAsNumber;
-        case 'lt':
-          return leftAsNumber < rightAsNumber;
-        case 'gteq':
-          return leftAsNumber >= rightAsNumber;
-        case 'lteq':
-          return leftAsNumber <= rightAsNumber;
-        default:
-          return leftValue === rightValue;
+      if (now === true) {
+        const inputDate = new Date(leftValue);
+        switch (customCompare) {
+          case 'lt':
+            return inputDate < isnow;
+          case 'gteq':
+            return inputDate >= isnow;
+          case 'lteq':
+            return inputDate <= isnow;
+          default:
+            return inputDate > isnow;
+        }
+      } else {
+        switch (compare) {
+          case 'neq':
+            return leftValue !== rightValue;
+          case 'contains':
+            return leftValue.indexOf(rightValue) > -1;
+          case 'notcontains':
+            return leftValue.indexOf(rightValue) < 0;
+          case 'gt':
+            return leftAsNumber > rightAsNumber;
+          case 'lt':
+            return leftAsNumber < rightAsNumber;
+          case 'gteq':
+            return leftAsNumber >= rightAsNumber;
+          case 'lteq':
+            return leftAsNumber <= rightAsNumber;
+          default:
+            return leftValue === rightValue;
+        }
       }
     };
 
