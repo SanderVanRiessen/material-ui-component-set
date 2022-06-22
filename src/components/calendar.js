@@ -302,10 +302,6 @@
       B.triggerEvent('SelectEventStart', eventStartTime);
       const eventEndTime = selectionInfo.end;
       B.triggerEvent('SelectEventEnd', eventEndTime);
-      // check if eventType is Room or Car
-      // trigger on room
-
-      // trigger on car
     };
     const today = new Date().toISOString().slice(0, 10);
 
