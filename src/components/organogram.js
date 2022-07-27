@@ -128,6 +128,7 @@
     function SortJSON(data, ToplevelName) {
       const teams = [];
       const jsonObj = [];
+      let errors = {};
       data.allTeambridge.results.forEach((newTeam, index) => {
         try {
           const teamObject = {
@@ -142,13 +143,15 @@
           // You now have a single dimension array of individual objects.
           teams.push(teamObject);
         } catch (e) {
-          throw new Error(
-            `Oops, I seem to be broken, I iterated up to id number ${data.allTeambridge.results[index].id}.` +
-              '\n' +
-              `This can be solved by removing the record in the TeamBridges from the back-office.`,
-          );
+          errors = {
+            error: `Oops, I seem to be broken, I iterated up to id number ${data.allTeambridge.results[index].id}.`,
+            solution: `This can be solved by removing the record in the TeamBridges from the back-office.`,
+          };
         }
       });
+      if (Object.keys(errors).length) {
+        return { status: 'error', message: errors };
+      }
 
       // Find all child-teams of a team
       teams.forEach(child => {
@@ -183,14 +186,33 @@
         return false;
       });
       const formattedTopLvl = ToplevelName.toUpperCase().trim();
-      if (ToplevelName)
-        return result.filter(
+      return {
+        status: 'great success!',
+        value: result.filter(
           x => x.childName.toUpperCase() === formattedTopLvl,
-        );
+        ),
+      };
     }
 
     // Creates a card that recursively loops through all cards using a GraphQL query.
     function LoadCards() {
+      const errorBox = (errorMessage, solution) => (
+        <div className={classes.org_tree}>
+          <ul>
+            <li>
+              <span>
+                <div>
+                  <h4>{errorMessage}</h4>
+                </div>
+                <hr />
+                <div>
+                  <p>{solution}</p>
+                </div>
+              </span>
+            </li>
+          </ul>
+        </div>
+      );
       return (
         <Query fetchPolicy="network-only" query={GET_USERINFO}>
           {({ loading, error, data }) => {
@@ -200,11 +222,20 @@
             if (error) {
               return `Error! ${error.Message}`;
             }
-            const result = SortJSON(data, parentName);
-            return (
-              <div className={classes.org_tree}>
-                <CardManager cardData={result} />
-              </div>
+            if (parentName) {
+              const result = SortJSON(data, parentName);
+              if (result.status === 'error') {
+                return errorBox(result.message.error, result.message.solution);
+              }
+              return (
+                <div className={classes.org_tree}>
+                  <CardManager cardData={result} />
+                </div>
+              );
+            }
+            return errorBox(
+              'I have not been configured',
+              'Please create the correct relations in the back-office',
             );
           }}
         </Query>
