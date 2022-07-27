@@ -128,18 +128,26 @@
     function SortJSON(data, ToplevelName) {
       const teams = [];
       const jsonObj = [];
-      data.allTeambridge.results.forEach(newTeam => {
-        const teamObject = {
-          id: newTeam.id,
-          childId: newTeam.childTeam.id,
-          childName: newTeam.childTeam.name,
-          parentName: newTeam.parentTeam.name,
-          childHierarchyLevel: newTeam.childTeam.hierarchyLevel,
-          childWebusers: newTeam.childTeam.webusers,
-          childArray: [],
-        };
-        // You now have a single dimension array of individual objects.
-        teams.push(teamObject);
+      data.allTeambridge.results.forEach((newTeam, index) => {
+        try {
+          const teamObject = {
+            id: newTeam.id,
+            childId: newTeam.childTeam.id,
+            childName: newTeam.childTeam.name,
+            parentName: newTeam.parentTeam.name,
+            childHierarchyLevel: newTeam.childTeam.hierarchyLevel,
+            childWebusers: newTeam.childTeam.webusers,
+            childArray: [],
+          };
+          // You now have a single dimension array of individual objects.
+          teams.push(teamObject);
+        } catch (e) {
+          throw new Error(
+            `Oops, I seem to be broken, I iterated up to id number ${data.allTeambridge.results[index].id}.` +
+              '\n' +
+              `This can be solved by removing the record in the TeamBridges from the back-office.`,
+          );
+        }
       });
 
       // Find all child-teams of a team
