@@ -229,7 +229,7 @@
               }
               return (
                 <div className={classes.org_tree}>
-                  <CardManager cardData={result} />
+                  <CardManager cardData={result.value} />
                 </div>
               );
             }
