@@ -42,7 +42,15 @@
         return (
           <>
             {teammembers
-              .sort((a, b) => b.firstName - a.firstName)
+              .sort((a, b) => {
+                if (a.firstName > b.firstName) {
+                  return 1;
+                }
+                if (b.firstName > a.firstName) {
+                  return -1;
+                }
+                return 0;
+              })
               .map(user => (
                 <>
                   <Link to={`/profile/${user ? user.id : null}`}>
