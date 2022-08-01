@@ -41,22 +41,24 @@
       if (teammembers && teammembers.length) {
         return (
           <>
-            {teammembers.map(user => (
-              <>
-                <Link to={`/profile/${user ? user.id : null}`}>
-                  <div className={classes.employee}>
-                    <div className={classes.employee_img}>
-                      <img
-                        src={user.profileImageUrl}
-                        className={classes.profile_pic}
-                        alt="Betty Logo"
-                      />
+            {teammembers
+              .sort((a, b) => b.firstName - a.firstName)
+              .map(user => (
+                <>
+                  <Link to={`/profile/${user ? user.id : null}`}>
+                    <div className={classes.employee}>
+                      <div className={classes.employee_img}>
+                        <img
+                          src={user.profileImageUrl}
+                          className={classes.profile_pic}
+                          alt="Betty Logo"
+                        />
+                      </div>
+                      <p>{user ? `${user.firstName} ${user.lastName}` : ' '}</p>
                     </div>
-                    <p>{user ? `${user.firstName} ${user.lastName}` : ' '}</p>
-                  </div>
-                </Link>
-              </>
-            ))}
+                  </Link>
+                </>
+              ))}
           </>
         );
       }
